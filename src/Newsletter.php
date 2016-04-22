@@ -4,11 +4,13 @@ use \DrewM\MailChimp\MailChimp;
 
 class Newsletter
 {
+	private $api_key;
+	private $list_id;
 	
 	function __construct()
 	{
 		// Call in config
-		$cac_donation_config = include(CNCNL_PROJECT_PATH . '/config.php');
+		$cac_donation_config = include(CNCNL_PROJECT_PATH . CNCNL_DS . 'config.php');
 		$this->api_key = $cac_donation_config['api_key'];
 		$this->list_id = $cac_donation_config['list_id'];
 
