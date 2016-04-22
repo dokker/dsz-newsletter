@@ -35,7 +35,10 @@ function __dsz_newsletter_load_plugin()
 	// load translations
 	load_plugin_textdomain( 'dsz-newsletter', false, 'dsz-newsletter/languages' );
 
-	$newsletter = new \cncNL\Newsletter();
+	$admin = new \cncNL\Admin();
+	if (is_admin()) {
+		$newsletter = new \cncNL\Newsletter();
+	}
 
 }
 
