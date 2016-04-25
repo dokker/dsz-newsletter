@@ -20,9 +20,10 @@ function __dsz_newsletter_load_plugin()
 	/**
 	 * Initial settings
 	 */
-	define('CNCNL_PROJECT_PATH', realpath(dirname(__FILE__)));
 	define('CNCNL_DS', DIRECTORY_SEPARATOR);
-	define('CNCNL_TEMPLATEDIR', CNCNL_PROJECT_PATH . CNCNL_DS . 'templates');
+	define('CNCNL_PROJECT_PATH', realpath(dirname(__FILE__)));
+	define('CNCNL_PROJECT_URL', plugins_url() . CNCNL_DS . 'dsz-newsletter');
+	define('CNCNL_TEMPLATE_DIR', CNCNL_PROJECT_PATH . CNCNL_DS . 'templates');
 
 	/**
 	 * Autoload
