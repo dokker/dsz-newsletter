@@ -17,6 +17,9 @@ class Admin {
 
 	public function getAdminPage()
 	{
+		$view = new \cncNL\View();
+		$html = $view->render('admin_index');
+		echo $html;
 	}
 
 	public function registerAdminScripts($hook_suffix) {

@@ -3,7 +3,7 @@ namespace cncNL;
 
 class View {
 
-	private $data;
+	private $data = array();
 
 	function __construct()
 	{
