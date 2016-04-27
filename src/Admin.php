@@ -23,13 +23,14 @@ class Admin {
 	}
 
 	public function registerAdminScripts($hook_suffix) {
-		echo $hook_suffix;
 		if ($hook_suffix == 'toplevel_page_hirlevel') {
-			wp_enqueue_script('media-upload');
-			wp_enqueue_script('postbox');
-			wp_enqueue_script('thickbox');
 			wp_register_script('nl-script', CNCNL_PROJECT_URL . CNCNL_DS . 'assets/js/admin.js', array('jquery','media-upload','thickbox'));
 			wp_enqueue_script('nl-script');
+			// scripts for metaboxes
+			wp_enqueue_script('postbox');
+			// scripts for media selector
+			wp_enqueue_media();
+			wp_enqueue_script('thb_media_selector', CNCNL_PROJECT_URL . CNCNL_DS . 'assets/js/thb.media_selector.js', array( 'jquery' ));
 
 			$this->prepareAJAX();
 		}
