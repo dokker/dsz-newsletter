@@ -7,7 +7,7 @@ class Admin {
 		add_action('admin_menu', [$this, 'registerAdminMenu'] );
 		add_action('admin_enqueue_scripts', [$this, 'registerAdminScripts']);
 		add_action('admin_enqueue_scripts', [$this, 'registerAdminStyles']);
-
+		include_once(dirname(CNCNL_PROJECT_PATH) . CNCNL_DS . 'dsz_daily_ad_sum/inc/das.class.php');
 	}
 
 	public function registerAdminMenu()
@@ -58,5 +58,17 @@ class Admin {
 			wp_enqueue_style( 'nl-style' , CNCNL_PROJECT_URL . CNCNL_DS . 'assets/css/admin.css');
 			wp_enqueue_style('thickbox');
 		}
+	}
+
+	/**
+	 * Get lead show id from dsz_daily_ad_sum plugin
+	 * @param  string $location Location name ("bp" or "videk")
+	 * @return int           Show ID
+	 */
+	private function getLeadShow($location)
+	{
+		$DAS = new \DAS();
+		$leadID = $DAS->get_lead_show_id($location);
+		return $leadID;
 	}
 }
