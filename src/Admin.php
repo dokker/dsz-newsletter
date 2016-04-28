@@ -12,12 +12,23 @@ class Admin {
 
 	public function registerAdminMenu()
 	{
-		add_menu_page('Hírlevél', 'Hírlevél',  'moderate_comments', 'hirlevel',  [$this, 'getAdminPage'], 'dashicons-email-alt', '55.8');
+		add_menu_page('Hírlevél', 'Hírlevél',  'moderate_comments', 'hirlevel',  [$this, 'getAdminListPage'], 'dashicons-email-alt', '55.8');
+		add_submenu_page( 'hirlevel', 'Hírlevél lista', 'Hírlevél lista', 'moderate_comments', 'hirlevel', [$this, 'getAdminListPage'] );
+		add_submenu_page( 'hirlevel', 'Új hírlevél', 'Új hírlevél', 'moderate_comments', 'hirlevel-add', [$this, 'getAdminCreatePage'] );
 	}
 
-	public function getAdminPage()
+	public function getAdminListPage()
+	{
+	}
+
+	public function getAdminCreatePage($value='')
 	{
 		$view = new \cncNL\View();
+		$view->assign('selector', $view->render('admin_selector'));
+		$view->assign('lead', $view->render('admin_lead'));
+		$view->assign('featured', $view->render('admin_featured'));
+		$view->assign('recommendations', $view->render('admin_recommendations'));
+		$view->assign('youtube', $view->render('admin_youtube'));
 		$html = $view->render('admin_index');
 		echo $html;
 	}
