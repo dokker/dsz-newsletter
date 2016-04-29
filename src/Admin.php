@@ -32,19 +32,23 @@ class Admin {
 		$this->newsletter = new \cncNL\Newsletter();
 
 		$view = new \cncNL\View();
-		
+
 		// segment selector
 		$segments = $this->newsletter->getSegments($this->list_id);
 		$segments_list = $this->prepareSegmentsList($segments);
 		$view->assign('list_segments', $view->renderList($segments_list, 'segments', 'sel-segments'));
 		$view->assign('selector', $view->render('admin_selector'));
 
+		$show_list = $this->listifyShowsList($this->getRecommendedShows());
+		$view->assign('list_shows_recommended', $view->renderList($show_list, 'shows-recommended', 'sel-recommendations'));
+		
+		$location = 'bp';
+		$lead_show = $this->getLeadShowDetails($this->getShowById($this->getLeadShow($location)));
+		$view->assign('lead_show', $lead_show);
 		$view->assign('lead', $view->render('admin_lead'));
 		$view->assign('featured', $view->render('admin_featured'));
 
 		// recommended shows list
-		$show_list = $this->listifyShowsList($this->getRecommendedShows());
-		$view->assign('list_shows_recommended', $view->renderList($show_list, 'shows-recommended', 'sel-recommendations'));
 		$view->assign('recommendations', $view->render('admin_recommendations'));
 
 		$view->assign('youtube', $view->render('admin_youtube'));
@@ -100,6 +104,18 @@ class Admin {
 		$DAS = new \DAS();
 		$leadID = $DAS->get_lead_show_id($location);
 		return $leadID;
+	}
+
+	private function getLeadShowDetails($show)
+	{
+		$details = [
+			'id' => $show->id,
+			'title' => $show->cim,
+			'image' => $this->cropLeadImage($show->eloadas_kepek[0]->original),
+			'date' => $show->ido,
+			'location' => $show->helyszin_nev,
+		];
+		return $details;
 	}
 
 	/**
@@ -180,5 +196,15 @@ class Admin {
 		}
 		array_multisort($keys, SORT_ASC, $sortable);
 		return $sortable;
+	}
+
+	private function cropLeadImage($src)
+	{
+		$image = wp_get_image_editor($src);
+		$image->resize(600, 276, true);
+		$uploads = wp_upload_dir();
+		$filename = $image->generate_filename( NULL, $uploads['basedir'], NULL );
+		$info = $image->save($filename);
+		return $uploads['baseurl'] . '/' . $info['file'];
 	}
 }

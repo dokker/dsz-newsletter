@@ -3,3 +3,24 @@
 	padding: 3px;
 	cursor: pointer;
 }
+
+.lead .lead-image-reset,
+.lead-image-selector {
+	display: none;
+}
+
+.submeta-area {
+	padding: 10px;
+	margin-top: 10px;
+	border: 1px solid #ddd;
+	background: #fafafa;
+}
+
+.submeta-area h4 {
+	margin: 0 0 5px;
+}
+
+.lead-image img {
+	max-width: 600px;
+	height: auto;
+}

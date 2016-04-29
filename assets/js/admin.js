@@ -9,6 +9,8 @@ jQuery(document).ready(function($) {
     var media = new THB_MediaSelector( {
       select: function( selected_images ) {
         $('#upload_image').val(selected_images.url);
+        $('.lead-image img').attr('src', selected_images.url);
+        $('.lead-image-reset').show();
       }
     } );
     media.open();
@@ -61,7 +63,8 @@ jQuery(document).ready(function($) {
    * @param  {object} list   List object
    */
   function handle_choice($button, $list) {
-    $button.click(function () {
+    $button.click(function (e) {
+      e.preventDefault();
       id = $(this).prev().val();
       if (!findInList($list, id)) {
         label = $(this).prev().find('option:selected').text();
@@ -73,11 +76,18 @@ jQuery(document).ready(function($) {
     });
   }
 
+  function handle_lead_creation() {
+    $('.lead-image-reset').click(function(e) {
+      e.preventDefault();
+    });
+  }
+
   /**
    * Initialize the newsletter generation form
    */
   function init_nl_form() {
     handle_choice($('.add_recommendation'), $('.nl-sortable.recommendations'));
+    handle_lead_creation();
   }
 
   init_nl_form();
