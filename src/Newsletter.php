@@ -12,7 +12,6 @@ class Newsletter
 		// Call in config
 		$cac_donation_config = include(CNCNL_PROJECT_PATH . CNCNL_DS . 'config.php');
 		$this->api_key = $cac_donation_config['api_key'];
-		$this->list_id = $cac_donation_config['list_id'];
 
 		$this->MC = new MailChimp($this->api_key);
 	}
@@ -22,7 +21,7 @@ class Newsletter
 	 * @param  int $list_id List ID
 	 * @return object          Result
 	 */
-	private function getSegment($list_id)
+	public function getSegments($list_id)
 	{
 		$result = $this->MC->get("lists/$list_id/segments");
 		if ($result !== false) {

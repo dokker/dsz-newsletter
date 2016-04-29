@@ -3,9 +3,8 @@
       <h3 class="hndle ui-sortable-handle"><span>Hírlevél típusa</span></h3>
       <div class="inside">
         <div class="newsletter-type-selector">
-          <label class="" for="upload_image">Hírlevél típusa</label>
-          Budapest <input class="selector" checked="checked" type="radio" size="36" name="newsletter_type" value="budapest" />
-          Vidék <input class="selector" type="radio" size="36" name="newsletter_type" value="videk" />
+          <?php echo $list_segments; ?>
+          <input class="button button-secondary add_segment" type="submit" value="Választás" />
         </div>
       </div>
     </div>

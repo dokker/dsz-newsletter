@@ -9,6 +9,8 @@ class Admin {
 		add_action('admin_menu', [$this, 'registerAdminMenu'] );
 		add_action('admin_enqueue_scripts', [$this, 'registerAdminScripts']);
 		add_action('admin_enqueue_scripts', [$this, 'registerAdminStyles']);
+		$cac_donation_config = include(CNCNL_PROJECT_PATH . CNCNL_DS . 'config.php');
+		$this->list_id = $cac_donation_config['list_id'];
 	}
 
 	public function registerAdminMenu()
@@ -27,9 +29,16 @@ class Admin {
 		require_once(dirname(CNCNL_PROJECT_PATH) . CNCNL_DS . 'dsz_daily_ad_sum/inc/das.class.php');
 		require_once(CNCNL_THEME . CNCNL_DS . 'inc/class/dumaszinhaz.class.php');
 		$this->dsz = new \Dumaszinhaz\Dumaszinhaz();
+		$this->newsletter = new \cncNL\Newsletter();
 
 		$view = new \cncNL\View();
+		
+		// segment selector
+		$segments = $this->newsletter->getSegments($this->list_id);
+		$segments_list = $this->prepareSegmentsList($segments);
+		$view->assign('list_segments', $view->renderList($segments_list, 'segments', 'sel-segments'));
 		$view->assign('selector', $view->render('admin_selector'));
+
 		$view->assign('lead', $view->render('admin_lead'));
 		$view->assign('featured', $view->render('admin_featured'));
 
@@ -119,7 +128,7 @@ class Admin {
 	 * @param  array $shows Shows list
 	 * @return array        List of items
 	 */
-	public function listifyShowsList($shows)
+	private function listifyShowsList($shows)
 	{
 		$list = array();
 		if (!empty($shows)) {
@@ -128,5 +137,48 @@ class Admin {
 			}
 		}
 		return $list;
+	}
+
+	/**
+	 * Listify and order properly the Segments list
+	 * @param  array $segments Segments list from MC API
+	 * @return array           Formatted segments list
+	 */
+	private function prepareSegmentsList($segments)
+	{
+		$list = array();
+		foreach ($segments['segments'] as $segment) {
+			$list[] = ['id' => $segment['id'], 'label' => $segment['name']];
+		}
+
+		$list = $this->sortByKey($list, 'label');
+
+		$budapest = array();
+		foreach ($list as $key => $item) {
+			if($item['label'] == 'Budapest') {
+				$budapest = $item;
+				unset($list[$key]);
+			}
+		}
+		if (!empty($budapest)) {
+			array_unshift($list, $budapest);
+		}
+		return $list;
+	}
+
+	/**
+	 * Sort array by given key values
+	 * @param  array $sortable     Sortable array
+	 * @param  string $selected_key Key to sort by
+	 * @return array               Sorted array
+	 */
+	private function sortByKey($sortable, $selected_key)
+	{
+		$keys = array();
+		foreach ($sortable as $key => $value) {
+			$keys[$key] = $value[$selected_key];
+		}
+		array_multisort($keys, SORT_ASC, $sortable);
+		return $sortable;
 	}
 }
