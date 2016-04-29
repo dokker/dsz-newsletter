@@ -2,12 +2,13 @@
 namespace cncNL;
 
 class Admin {
+	private $dsz;
+
 	function __construct()
 	{
 		add_action('admin_menu', [$this, 'registerAdminMenu'] );
 		add_action('admin_enqueue_scripts', [$this, 'registerAdminScripts']);
 		add_action('admin_enqueue_scripts', [$this, 'registerAdminStyles']);
-		include_once(dirname(CNCNL_PROJECT_PATH) . CNCNL_DS . 'dsz_daily_ad_sum/inc/das.class.php');
 	}
 
 	public function registerAdminMenu()
@@ -23,18 +24,27 @@ class Admin {
 
 	public function getAdminCreatePage($value='')
 	{
+		require_once(dirname(CNCNL_PROJECT_PATH) . CNCNL_DS . 'dsz_daily_ad_sum/inc/das.class.php');
+		require_once(CNCNL_THEME . CNCNL_DS . 'inc/class/dumaszinhaz.class.php');
+		$this->dsz = new \Dumaszinhaz\Dumaszinhaz();
+
 		$view = new \cncNL\View();
 		$view->assign('selector', $view->render('admin_selector'));
 		$view->assign('lead', $view->render('admin_lead'));
 		$view->assign('featured', $view->render('admin_featured'));
+
+		// recommended shows list
+		$show_list = $this->listifyShowsList($this->getRecommendedShows());
+		$view->assign('list_shows_recommended', $view->renderList($show_list, 'shows-recommended', 'sel-recommendations'));
 		$view->assign('recommendations', $view->render('admin_recommendations'));
+
 		$view->assign('youtube', $view->render('admin_youtube'));
 		$html = $view->render('admin_index');
 		echo $html;
 	}
 
 	public function registerAdminScripts($hook_suffix) {
-		if ($hook_suffix == 'toplevel_page_hirlevel') {
+		if ($hook_suffix == 'hirlevel_page_hirlevel-add') {
 			wp_register_script('nl-script', CNCNL_PROJECT_URL . CNCNL_DS . 'assets/js/admin.js', array('jquery','media-upload','thickbox'));
 			wp_enqueue_script('nl-script');
 			// scripts for metaboxes
@@ -65,7 +75,7 @@ class Admin {
 	}
 
 	public function registerAdminStyles($hook_suffix) {
-		if ($hook_suffix == 'toplevel_page_hirlevel') {
+		if ($hook_suffix == 'hirlevel_page_hirlevel-add') {
 			wp_enqueue_style( 'nl-style' , CNCNL_PROJECT_URL . CNCNL_DS . 'assets/css/admin.css');
 			wp_enqueue_style('thickbox');
 		}
@@ -81,5 +91,42 @@ class Admin {
 		$DAS = new \DAS();
 		$leadID = $DAS->get_lead_show_id($location);
 		return $leadID;
+	}
+
+	/**
+	 * Get shows for recommended list
+	 * @return array Array of shows objects
+	 */
+	public function getRecommendedShows()
+	{
+		$shows = $this->dsz->getMusorLista();
+		return $shows;
+	}
+
+	/**
+	 * Get show by given ID
+	 * @param  int $id ID of the show
+	 * @return object     Show data
+	 */
+	public function getShowById($id)
+	{
+		$show = $this->dsz->getMusorById($id);
+		return $show;
+	}
+
+	/**
+	 * Create a list from given shows list
+	 * @param  array $shows Shows list
+	 * @return array        List of items
+	 */
+	public function listifyShowsList($shows)
+	{
+		$list = array();
+		if (!empty($shows)) {
+			foreach ($shows as $show) {
+				$list[] = ['label' => $show->cim, 'id' => $show->id];
+			}
+		}
+		return $list;
 	}
 }
