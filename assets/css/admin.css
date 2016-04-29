@@ -1,0 +1,5 @@
+.nl-sortable li {
+	background: #fee;
+	padding: 3px;
+	cursor: pointer;
+}
