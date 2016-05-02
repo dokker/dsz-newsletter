@@ -5,9 +5,9 @@
         <div class="lead">
           <div class="submeta-area">
             <h4>Előadás részletei:</h4>
-            <p class="lead-title">Cím: <?php echo $lead_show['title']; ?></p>
-            <p class="lead-date">Időpont: <?php echo $lead_show['date']; ?></p>
-            <p class="lead-location">Helyszín: <?php echo $lead_show['location']; ?></p>
+            <p class="lead-title">Cím: <span><?php echo $lead_show['title']; ?></span></p>
+            <p class="lead-date">Időpont: <span><?php echo $lead_show['date']; ?></span></p>
+            <p class="lead-location">Helyszín: <span><?php echo $lead_show['location']; ?></span></p>
             <div class="lead-image"><img src="<?php echo $lead_show['image']; ?>" alt="<?php echo $lead_show['title']; ?>" /></div>
             <button class="lead-image-reset button">Alapértelmezett kép visszaállítása</button>
             <label class="screen-reader-text" for="upload_image">Fejléckép</label>
@@ -16,7 +16,7 @@
           </div>
           <div class="submeta-area">
             <h4>További választható előadások:</h4>
-            <?php echo $list_shows_recommended; ?>
+            <?php echo $list_shows_recommended_lead; ?>
             <input id="lead-show-custom" class="button" type="button" value="Lead előadás cseréje" />
           </div>
         </div>

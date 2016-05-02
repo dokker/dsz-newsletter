@@ -76,9 +76,29 @@ jQuery(document).ready(function($) {
     });
   }
 
+  function replace_lead_data (data) {
+      $('.lead-title span').text(data.title);
+      $('.lead-date span').text(data.date);
+      $('.lead-location span').text(data.location);
+      $('.lead-image img').attr('src', data.image + '?timestamp=' + new Date().getTime());
+  }
+
   function handle_lead_creation() {
     $('.lead-image-reset').click(function(e) {
       e.preventDefault();
+    });
+    $('#lead-show-custom').click(function(e) {
+      e.preventDefault();
+      var data = {
+        show_id: $('.sel-lead-recommendations').val(),
+        action: 'get_lead_show_details',
+        _ajax_nonce: nl_params.nonce,
+      }
+      $.post(nl_params.ajax_url, data, function(response) {
+        if (response.success == true) {
+          replace_lead_data($.parseJSON(response.data));
+        }
+      });
     });
   }
 

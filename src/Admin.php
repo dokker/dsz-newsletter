@@ -11,6 +11,12 @@ class Admin {
 		add_action('admin_enqueue_scripts', [$this, 'registerAdminStyles']);
 		$cac_donation_config = include(CNCNL_PROJECT_PATH . CNCNL_DS . 'config.php');
 		$this->list_id = $cac_donation_config['list_id'];
+		$this->setupAjaxHandlers();
+
+		require_once(dirname(CNCNL_PROJECT_PATH) . CNCNL_DS . 'dsz_daily_ad_sum/inc/das.class.php');
+		require_once(CNCNL_THEME . CNCNL_DS . 'inc/class/dumaszinhaz.class.php');
+		$this->dsz = new \Dumaszinhaz\Dumaszinhaz();
+		$this->newsletter = new \cncNL\Newsletter();
 	}
 
 	public function registerAdminMenu()
@@ -24,13 +30,11 @@ class Admin {
 	{
 	}
 
-	public function getAdminCreatePage($value='')
+	/**
+	 * Generate Newsletter creation page
+	 */
+	public function getAdminCreatePage()
 	{
-		require_once(dirname(CNCNL_PROJECT_PATH) . CNCNL_DS . 'dsz_daily_ad_sum/inc/das.class.php');
-		require_once(CNCNL_THEME . CNCNL_DS . 'inc/class/dumaszinhaz.class.php');
-		$this->dsz = new \Dumaszinhaz\Dumaszinhaz();
-		$this->newsletter = new \cncNL\Newsletter();
-
 		$view = new \cncNL\View();
 
 		// segment selector
@@ -39,16 +43,18 @@ class Admin {
 		$view->assign('list_segments', $view->renderList($segments_list, 'segments', 'sel-segments'));
 		$view->assign('selector', $view->render('admin_selector'));
 
+		// create recommended shows markup
 		$show_list = $this->listifyShowsList($this->getRecommendedShows());
-		$view->assign('list_shows_recommended', $view->renderList($show_list, 'shows-recommended', 'sel-recommendations'));
 		
 		$location = 'bp';
 		$lead_show = $this->getLeadShowDetails($this->getShowById($this->getLeadShow($location)));
+		$view->assign('list_shows_recommended_lead', $view->renderList($show_list, 'sel-lead-recommendations', 'sel-lead-recommendations'));
 		$view->assign('lead_show', $lead_show);
 		$view->assign('lead', $view->render('admin_lead'));
 		$view->assign('featured', $view->render('admin_featured'));
 
 		// recommended shows list
+		$view->assign('list_shows_recommended', $view->renderList($show_list, 'shows-recommended', 'sel-recommendations'));
 		$view->assign('recommendations', $view->render('admin_recommendations'));
 
 		$view->assign('youtube', $view->render('admin_youtube'));
@@ -70,6 +76,17 @@ class Admin {
 		}
 	}
 
+	/**
+	 * Setting up ajax handlers
+	 */
+	private function setupAjaxHandlers()
+	{
+		add_action('wp_ajax_get_lead_show_details', array($this, 'ajaxGetLeadShowDetails'));
+	}
+
+	/**
+	 * Prepare AJAX scripts
+	 */
 	private function prepareAJAX()
 	{
 			// Prepare AJAX
@@ -106,12 +123,17 @@ class Admin {
 		return $leadID;
 	}
 
+	/**
+	 * Sipmlify show data structure
+	 * @param  object $show Show object
+	 * @return array       Simplified data
+	 */
 	private function getLeadShowDetails($show)
 	{
 		$details = [
 			'id' => $show->id,
 			'title' => $show->cim,
-			'image' => $this->cropLeadImage($show->eloadas_kepek[0]->original),
+			'image' => $this->cropLeadImage($show->eloadas_kepek[0]->original, true),
 			'date' => $show->ido,
 			'location' => $show->helyszin_nev,
 		];
@@ -198,13 +220,35 @@ class Admin {
 		return $sortable;
 	}
 
-	private function cropLeadImage($src)
+	/**
+	 * Crop image by url
+	 * @param  string  $src     Image URL
+	 * @param  boolean $preview Store temporarily
+	 * @return string           Created image URL
+	 */
+	private function cropLeadImage($src, $preview = false)
 	{
 		$image = wp_get_image_editor($src);
 		$image->resize(600, 276, true);
 		$uploads = wp_upload_dir();
-		$filename = $image->generate_filename( NULL, $uploads['basedir'], NULL );
+		$dir = $uploads['basedir'] . '/nl-lead';
+		if ($preview) {
+			$filename = $dir . '/temp-preview.jpg';
+		} else {
+			$filename = $image->generate_filename( NULL, $dir, NULL );
+		}
 		$info = $image->save($filename);
-		return $uploads['baseurl'] . '/' . $info['file'];
+		return $uploads['baseurl'] . '/nl-lead/' . $info['file'];
+	}
+
+	/**
+	 * Lead Show Details for AJAX call
+	 */
+	public function ajaxGetLeadShowDetails()
+	{
+		check_ajax_referer( 'ajax_newsletter_admin', '_ajax_nonce' );
+		$id = intval($_POST['show_id']);
+		$details = $this->getLeadShowDetails($this->getShowById($id));
+		wp_send_json_success(wp_json_encode($details));
 	}
 }
