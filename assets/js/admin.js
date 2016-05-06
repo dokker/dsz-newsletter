@@ -107,6 +107,7 @@ jQuery(document).ready(function($) {
    */
   function init_nl_form() {
     handle_choice($('.add_recommendation'), $('.nl-sortable.recommendations'));
+    handle_choice($('.add_featured'), $('.nl-sortable.featured'));
     handle_lead_creation();
   }
 

@@ -51,6 +51,10 @@ class Admin {
 		$view->assign('list_shows_recommended_lead', $view->renderList($show_list, 'sel-lead-recommendations', 'sel-lead-recommendations'));
 		$view->assign('lead_show', $lead_show);
 		$view->assign('lead', $view->render('admin_lead'));
+
+		// create featured shows markup
+		$featured_list = $this->listifyShowsList($this->getFeaturedShows($location));
+		$view->assign('list_shows_featured', $view->renderList($show_list, 'shows-featured', 'sel-featured'));
 		$view->assign('featured', $view->render('admin_featured'));
 
 		// recommended shows list
@@ -151,6 +155,18 @@ class Admin {
 	}
 
 	/**
+	 * Get shows for featured list
+	 * @param string $location Chosen location (bp, videk)
+	 * @return array Array of shows objects
+	 */
+	private function getFeaturedShows($location)
+	{
+		// For testing purposes only. Will be changed in the future.
+		$shows = $this->dsz->getMusorLista();
+		return $shows;
+	}
+
+	/**
 	 * Get show by given ID
 	 * @param  int $id ID of the show
 	 * @return object     Show data
@@ -238,7 +254,7 @@ class Admin {
 			$filename = $image->generate_filename( NULL, $dir, NULL );
 		}
 		$info = $image->save($filename);
-		return $uploads['baseurl'] . '/nl-lead/' . $info['file'];
+		return $uploads['baseurl'] . '/nl-images/' . $info['file'];
 	}
 
 	/**

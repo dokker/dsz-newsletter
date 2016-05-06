@@ -2,9 +2,10 @@
       <div class="handlediv" title="Bővebben kikapcsolás/bekapcsolás"><br></div>
       <h3 class="hndle ui-sortable-handle"><span>Akciós előadások</span></h3>
       <div class="inside">
-        <div class="content-type-selector">
+        <ul class="nl-sortable featured"></ul>
+        <div class="choices">
+          <?php echo $list_shows_featured; ?>
+          <button class="button button-secondary add_featured">Hozzáadás</button>
         </div>
-        <ul class="highlighted-content-list">
-        </ul>
       </div>
     </div>

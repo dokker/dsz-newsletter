@@ -24,3 +24,13 @@
 	max-width: 600px;
 	height: auto;
 }
+
+.inside.youtube label {
+	display: inline-block;
+	width: 100px;
+}
+
+.inside.youtube input {
+	display: inline-block;
+	width: 400px;
+}
