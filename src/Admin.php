@@ -260,9 +260,9 @@ class Admin {
 		$image = wp_get_image_editor($src);
 		$image->resize(600, 276, true);
 		$uploads = wp_upload_dir();
-		$dir = $uploads['basedir'] . '/nl-lead';
+		$dir = $uploads['basedir'] . '/nl-images';
 		if ($preview) {
-			$filename = $dir . '/temp-preview.jpg';
+			$filename = $dir . '/temp-preview2.jpg';
 		} else {
 			$filename = $image->generate_filename( NULL, $dir, NULL );
 		}
