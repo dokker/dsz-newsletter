@@ -37,32 +37,45 @@ class Admin {
 	{
 		$view = new \cncNL\View();
 
-		// segment selector
-		$segments = $this->newsletter->getSegments($this->list_id);
-		$segments_list = $this->prepareSegmentsList($segments);
-		$view->assign('list_segments', $view->renderList($segments_list, 'segments', 'sel-segments'));
-		$view->assign('selector', $view->render('admin_selector'));
 
-		// create recommended shows markup
-		$show_list = $this->listifyShowsList($this->getRecommendedShows());
-		
-		$location = 'bp';
-		$lead_show = $this->getLeadShowDetails($this->getShowById($this->getLeadShow($location)));
-		$view->assign('list_shows_recommended_lead', $view->renderList($show_list, 'sel-lead-recommendations', 'sel-lead-recommendations'));
-		$view->assign('lead_show', $lead_show);
-		$view->assign('lead', $view->render('admin_lead'));
 
-		// create featured shows markup
-		$featured_list = $this->listifyShowsList($this->getFeaturedShows($location));
-		$view->assign('list_shows_featured', $view->renderList($show_list, 'shows-featured', 'sel-featured'));
-		$view->assign('featured', $view->render('admin_featured'));
+		if (!isset($_POST['sel-segments'])) {
+			// segment selector
+			$segments = $this->newsletter->getSegments($this->list_id);
+			$segments_list = $this->prepareSegmentsList($segments);
+			$view->assign('list_segments', $view->renderList($segments_list, 'segments', 'sel-segments'));
+			$view->assign('selector', $view->render('admin_selector'));
+			$view->assign('location', false);
+		} else {
+			if ($_POST['sel-segments'] == $this->getCapitalId()) {
+				// do Budapest stuff
+				$location = 'bp';
+			} else {
+				// do Videk stuff
+				$location = 'videk';
+			}
+			// create recommended shows markup
+			$show_list = $this->listifyShowsList($this->getRecommendedShows());
+			
+			$lead_show = $this->getLeadShowDetails($this->getShowById($this->getLeadShow($location)));
+			$view->assign('list_shows_recommended_lead', $view->renderList($show_list, 'sel-lead-recommendations', 'sel-lead-recommendations'));
+			$view->assign('lead_show', $lead_show);
+			$view->assign('lead', $view->render('admin_lead'));
 
-		// recommended shows list
-		$view->assign('list_shows_recommended', $view->renderList($show_list, 'shows-recommended', 'sel-recommendations'));
-		$view->assign('recommendations', $view->render('admin_recommendations'));
+			// create featured shows markup
+			$featured_list = $this->listifyShowsList($this->getFeaturedShows($location));
+			$view->assign('list_shows_featured', $view->renderList($show_list, 'shows-featured', 'sel-featured'));
+			$view->assign('featured', $view->render('admin_featured'));
 
-		$view->assign('youtube', $view->render('admin_youtube'));
+			// recommended shows list
+			$view->assign('list_shows_recommended', $view->renderList($show_list, 'shows-recommended', 'sel-recommendations'));
+			$view->assign('recommendations', $view->render('admin_recommendations'));
+
+			$view->assign('youtube', $view->render('admin_youtube'));
+			$view->assign('location', $location);
+		}
 		$html = $view->render('admin_index');
+
 		echo $html;
 	}
 
@@ -266,5 +279,16 @@ class Admin {
 		$id = intval($_POST['show_id']);
 		$details = $this->getLeadShowDetails($this->getShowById($id));
 		wp_send_json_success(wp_json_encode($details));
+	}
+
+	private function getCapitalId()
+	{
+		$segments = $this->newsletter->getSegments($this->list_id);
+		foreach ($segments['segments'] as $segment) {
+			if ($segment['name'] == 'Budapest') {
+				return $segment['id'];
+			}
+		}
+		return false;
 	}
 }

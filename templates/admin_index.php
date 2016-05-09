@@ -5,11 +5,14 @@
 <div class="postbox-container" style="width: 98%;">
   <div class="meta-box-sortables ui-sortable">
 	<form action="" method="post" class="nl-form">
-    <?php echo $selector; ?>
-    <?php echo $lead; ?>
-    <?php echo $featured; ?>
-    <?php echo $recommendations; ?>
-    <?php echo $youtube; ?>
+	<?php if (!$location): ?>
+	    <?php echo $selector; ?>
+	<?php else: ?>
+	    <?php echo $lead; ?>
+	    <?php echo $featured; ?>
+	    <?php echo $recommendations; ?>
+	    <?php echo $youtube; ?>
+	<?php endif; ?>
     </form>
   </div>
 </div>
