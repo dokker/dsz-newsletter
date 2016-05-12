@@ -35,6 +35,24 @@ class Model {
 		}
 	}
 
+	public function filterNlData($raw)
+	{
+		parse_str($raw['input-featured'], $featured);
+		parse_str($raw['input-recommendations'], $recommendations);
+		$data = [
+			'title' => sanitize_text_field($raw['input-title']),
+			'segment' => intval($raw['input-segment']),
+			'lead-id' => intval($raw['lead-id']),
+			'lead-image' => esc_url($image_url),
+			'featured' => $featured,
+			'recommendations' => $recommendations,
+			'yt-url' => esc_url($raw['youtube-url']),
+			'yt-title' => sanitize_text_field($raw['youtube-title']),
+			'mc_template' => intval($raw['sel-templates']),
+		];
+		return $data;
+	}
+
 	public function insertNewsletter($data)
 	{
 	}

@@ -6,6 +6,7 @@
       	<div class="choices">
       		<?php echo $list_shows_recommended; ?>
       		<button class="button button-secondary add_recommendation">Hozzáadás</button>
+          <input type="hidden" name="input-recommendations" class="input-recommendations" />
       	</div>
       </div>
     </div>

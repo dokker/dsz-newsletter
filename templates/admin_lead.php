@@ -13,6 +13,7 @@
             <label class="screen-reader-text" for="upload_image">Fejléckép</label>
             <input id="upload_image" type="hidden" size="36" name="upload_image" value="" />
             <input id="upload_image_button" class="button" type="button" value="Lead kép cseréje" />
+            <input type="hidden" name="lead-id" value="<?php echo $lead_show['id']; ?>" />
           </div>
           <div class="submeta-area">
             <h4>További választható előadások:</h4>

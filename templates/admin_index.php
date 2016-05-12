@@ -8,10 +8,14 @@
 	<?php if (!$location): ?>
 	    <?php echo $selector; ?>
 	<?php else: ?>
+	    <?php echo $title; ?>
 	    <?php echo $lead; ?>
 	    <?php echo $featured; ?>
 	    <?php echo $recommendations; ?>
 	    <?php echo $youtube; ?>
+	    <?php echo $mc_template; ?>
+	    <input type="hidden" name="input-segment" value="<?php echo $segment; ?>" />
+	    <input type="submit" name="nl-form-save" value="Kampány létrehozása" class="button button-primary" />
 	<?php endif; ?>
     </form>
   </div>

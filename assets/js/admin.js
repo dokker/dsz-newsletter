@@ -37,8 +37,10 @@ jQuery(document).ready(function($) {
 
   // handle submit
   $('.nl-form').submit(function() {
-    var data = $('.nl-sortable.recommendations').sortable('serialize');
-    $('.input-recommendations').val(data);
+    var fdata = $('.nl-sortable.featured').sortable('serialize');
+    $('.input-featured').val(fdata);
+    var rdata = $('.nl-sortable.recommendations').sortable('serialize');
+    $('.input-recommendations').val(rdata);
   });
 
   /**
@@ -68,7 +70,7 @@ jQuery(document).ready(function($) {
       id = $(this).prev().val();
       if (!findInList($list, id)) {
         label = $(this).prev().find('option:selected').text();
-        var item = '<li id="item_' + id + '" data-id="' + id + '">' + label + '</li>';
+        var item = '<li id="items_' + id + '" data-id="' + id + '">' + label + '</li>';
         $list.append(item);
       } else {
         messageDialog('Ütközés', 'Ez az előadás már szerepel a listában.');

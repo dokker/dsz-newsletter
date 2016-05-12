@@ -6,6 +6,7 @@
         <div class="choices">
           <?php echo $list_shows_featured; ?>
           <button class="button button-secondary add_featured">Hozzáadás</button>
+          <input type="hidden" name="input-featured" class="input-featured" />
         </div>
       </div>
     </div>

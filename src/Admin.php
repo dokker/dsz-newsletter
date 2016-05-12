@@ -41,45 +41,51 @@ class Admin {
 
 
 
-		if (!isset($_POST['sel-segments'])) {
-			// segment selector
-			$segments = $this->newsletter->getSegments($this->list_id);
-			$segments_list = $this->prepareSegmentsList($segments);
-			$view->assign('list_segments', $view->renderList($segments_list, 'segments', 'sel-segments'));
-			$view->assign('selector', $view->render('admin_selector'));
-			$view->assign('location', false);
-		} else {
-			if ($_POST['sel-segments'] == $this->getCapitalId()) {
-				// do Budapest stuff
-				$location = 'bp';
+		if (!isset($_POST['nl-form-save'])) {
+			if (!isset($_POST['sel-segments'])) {
+				// segment selector
+				$segments = $this->newsletter->getSegments($this->list_id);
+				$segments_list = $this->prepareSegmentsList($segments);
+				$view->assign('list_segments', $view->renderList($segments_list, 'segments', 'sel-segments'));
+				$view->assign('selector', $view->render('admin_selector'));
+				$view->assign('location', false);
 			} else {
-				// do Videk stuff
-				$location = 'videk';
+				if ($_POST['sel-segments'] == $this->getCapitalId()) {
+					// do Budapest stuff
+					$location = 'bp';
+				} else {
+					// do Videk stuff
+					$location = 'videk';
+				}
+				$view->assign('title', $view->render('admin_title'));
+				// create recommended shows markup
+				$show_list = $this->listifyShowsList($this->getRecommendedShows());
+				
+				$lead_show = $this->getLeadShowDetails($this->getShowById($this->getLeadShow($location)));
+				$view->assign('list_shows_recommended_lead', $view->renderList($show_list, 'sel-lead-recommendations', 'sel-lead-recommendations'));
+				$view->assign('lead_show', $lead_show);
+				$view->assign('lead', $view->render('admin_lead'));
+
+				// create featured shows markup
+				$featured_list = $this->listifyShowsList($this->getFeaturedShows($location));
+				$view->assign('list_shows_featured', $view->renderList($show_list, 'shows-featured', 'sel-featured'));
+				$view->assign('featured', $view->render('admin_featured'));
+
+				// recommended shows list
+				$view->assign('list_shows_recommended', $view->renderList($show_list, 'shows-recommended', 'sel-recommendations'));
+				$view->assign('recommendations', $view->render('admin_recommendations'));
+
+				$view->assign('youtube', $view->render('admin_youtube'));
+				$view->assign('segment', $_POST['sel-segments']);
+				$view->assign('location', $location);
+
+				$templates = $this->newsletter->getTemplates();
+				$template_list = $this->prepareTemplateList($templates);
+				$view->assign('list_templates', $view->renderList($template_list, 'templates', 'sel-templates'));
+				$view->assign('mc_template', $view->render('admin_template'));
 			}
-			// create recommended shows markup
-			$show_list = $this->listifyShowsList($this->getRecommendedShows());
-			
-			$lead_show = $this->getLeadShowDetails($this->getShowById($this->getLeadShow($location)));
-			$view->assign('list_shows_recommended_lead', $view->renderList($show_list, 'sel-lead-recommendations', 'sel-lead-recommendations'));
-			$view->assign('lead_show', $lead_show);
-			$view->assign('lead', $view->render('admin_lead'));
-
-			// create featured shows markup
-			$featured_list = $this->listifyShowsList($this->getFeaturedShows($location));
-			$view->assign('list_shows_featured', $view->renderList($show_list, 'shows-featured', 'sel-featured'));
-			$view->assign('featured', $view->render('admin_featured'));
-
-			// recommended shows list
-			$view->assign('list_shows_recommended', $view->renderList($show_list, 'shows-recommended', 'sel-recommendations'));
-			$view->assign('recommendations', $view->render('admin_recommendations'));
-
-			$view->assign('youtube', $view->render('admin_youtube'));
-			$view->assign('location', $location);
-
-			$templates = $this->newsletter->getTemplates();
-			$template_list = $this->prepareTemplateList($templates);
-			$view->assign('list_templates', $view->renderList($template_list, 'templates', 'sel-templates'));
-			$view->assign('mc_template', $view->render('admin_template'));
+		} else {
+			$this->storeNewsletter();
 		}
 		$html = $view->render('admin_index');
 
@@ -162,6 +168,17 @@ class Admin {
 			'location' => $show->helyszin_nev,
 		];
 		return $details;
+	}
+
+	/**
+	 * Stores resized show image and gives back the URL
+	 * @param  int $show_id Show ID
+	 * @return string          Image URL
+	 */
+	private function getLeadShowImage($show_id)
+	{
+		$show = $this->dsz->getMusorById($show_id);
+		return $this->cropLeadImage($show->eloadas_kepek[0]->original);
 	}
 
 	/**
@@ -312,5 +329,27 @@ class Admin {
 			}
 		}
 		return false;
+	}
+
+	private function storeNewsletter()
+	{
+		if (!empty($_POST['upload_image'])) {
+			$image_url = $_POST['upload_image'];
+		} else {
+			$image_url = $this->getLeadShowImage($_POST['lead-id']);
+		}
+		$data = [
+			'title' => $_POST['input-title'],
+			'segment' => $_POST['input-segment'],
+			'lead-id' => $_POST['lead-id'],
+			'lead-image' => $image_url,
+			'featured' => $_POST['input-featured'],
+			'recommendations' => $_POST['input-recommendations'],
+			'yt-url' => $_POST['youtube-url'],
+			'yt-title' => $_POST['youtube-title'],
+			'mc_template' => $_POST['sel-templates'],
+		];
+		$data = $this->model->filterNlData($data);
+		$this->model->insertNewsletter($data);
 	}
 }
