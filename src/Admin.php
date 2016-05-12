@@ -17,6 +17,8 @@ class Admin {
 		require_once(CNCNL_THEME . CNCNL_DS . 'inc/class/dumaszinhaz.class.php');
 		$this->dsz = new \Dumaszinhaz\Dumaszinhaz();
 		$this->newsletter = new \cncNL\Newsletter();
+
+		$this->model = new \cncNL\Model();
 	}
 
 	public function registerAdminMenu()
