@@ -30,6 +30,18 @@ class Newsletter
 	}
 
 	/**
+	 * Get templates
+	 * @return object          Result
+	 */
+	public function getTemplates()
+	{
+		$result = $this->MC->get("templates");
+		if ($result !== false) {
+			return $result;
+		}
+	}
+
+	/**
 	 * Create new campaign for given subscriber list
 	 * @param  int  $list_id    List ID
 	 * @param  string  $name       Name of the campaign

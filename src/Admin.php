@@ -75,6 +75,11 @@ class Admin {
 
 			$view->assign('youtube', $view->render('admin_youtube'));
 			$view->assign('location', $location);
+
+			$templates = $this->newsletter->getTemplates();
+			$template_list = $this->prepareTemplateList($templates);
+			$view->assign('list_templates', $view->renderList($template_list, 'templates', 'sel-templates'));
+			$view->assign('mc_template', $view->render('admin_template'));
 		}
 		$html = $view->render('admin_index');
 
@@ -232,6 +237,21 @@ class Admin {
 		if (!empty($budapest)) {
 			array_unshift($list, $budapest);
 		}
+		return $list;
+	}
+
+	/**
+	 * Listify and order properly the Template list
+	 * @param  array $templates Segments list from MC API
+	 * @return array           Formatted template list
+	 */
+	private function prepareTemplateList($templates)
+	{
+		$list = array();
+		foreach ($templates['templates'] as $template) {
+			$list[] = ['id' => $template['id'], 'label' => $template['name']];
+		}
+		// $list = $this->sortByKey($list, 'label');
 		return $list;
 	}
 
