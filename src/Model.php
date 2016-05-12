@@ -37,18 +37,18 @@ class Model {
 
 	public function filterNlData($raw)
 	{
-		parse_str($raw['input-featured'], $featured);
-		parse_str($raw['input-recommendations'], $recommendations);
+		parse_str($raw['featured'], $featured);
+		parse_str($raw['recommendations'], $recommendations);
 		$data = [
-			'title' => sanitize_text_field($raw['input-title']),
-			'segment' => intval($raw['input-segment']),
+			'title' => sanitize_text_field($raw['title']),
+			'segment' => intval($raw['segment']),
 			'lead-id' => intval($raw['lead-id']),
-			'lead-image' => esc_url($image_url),
+			'lead-image' => esc_url($raw['lead-image']),
 			'featured' => $featured,
 			'recommendations' => $recommendations,
-			'yt-url' => esc_url($raw['youtube-url']),
-			'yt-title' => sanitize_text_field($raw['youtube-title']),
-			'mc_template' => intval($raw['sel-templates']),
+			'yt-url' => esc_url($raw['yt-url']),
+			'yt-title' => sanitize_text_field($raw['yt-title']),
+			'mc_template' => intval($raw['mc_template']),
 		];
 		return $data;
 	}

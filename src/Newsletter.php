@@ -47,9 +47,9 @@ class Newsletter
 	 * @param  string  $name       Name of the campaign
 	 * @param  int $template_id Template ID
 	 * @param  int,boolean $segment_id Segment ID
-	 * @return int,boolean              Operation result
+	 * @return int,boolean              Campaign id or false
 	 */
-	private function createCampaign($list_id, $name, $template_id, $segment_id = false)
+	public function createCampaign($list_id, $name, $template_id, $segment_id = false)
 	{
 		$defaults = $this->getCampaignDefaults($list_id);
 		$data = [
@@ -60,15 +60,18 @@ class Newsletter
 				'from_name' => $defaults['from_name'],
 				'reply_to' => $defaults['from_email'],
 				'template_id' => $template_id,
+				'inline_css' => true,
 			]
 		];
 		if ($segment_id) {
 			$data['recipients']->segment_opts = new \stdClass;
 			$data['recipients']->segment_opts->saved_segment_id = $segment_id;
 		}
-		$this->MC->post("campaigns", $data);
+		$response = $this->MC->post("campaigns", $data);
 		if(!$this->MC->getLastError()) {
-			return true;
+			return $response->id;
+		} else {
+			return false;
 		}
 	}
 

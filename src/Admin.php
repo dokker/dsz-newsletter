@@ -331,6 +331,10 @@ class Admin {
 		return false;
 	}
 
+	/**
+	 * Handle newsletter storage and populating to MC
+	 * @return boolean,string Error message or true
+	 */
 	private function storeNewsletter()
 	{
 		if (!empty($_POST['upload_image'])) {
@@ -350,6 +354,16 @@ class Admin {
 			'mc_template' => $_POST['sel-templates'],
 		];
 		$data = $this->model->filterNlData($data);
-		$this->model->insertNewsletter($data);
+		if ($this->getCapitalId() == $data['segment']) {
+			$campaign_id = $this->newsletter->createCampaign($this->list_id, $data['title'], $data['mc_template'], $data['segment']);
+		} else {
+			$campaign_id = $this->newsletter->createCampaign($this->list_id, $data['title'], $data['mc_template']);
+		}
+		$data['campaign_id'] = $campaign_id;
+		if ($campaign_id) {
+			$this->model->insertNewsletter($data);
+		} else {
+			echo "MC Campaign creation failed.";
+		}
 	}
 }
