@@ -36,4 +36,16 @@ class View {
 		$this->assign('listdata', $listdata);
 		return $this->render('admin_list');
 	}
+
+	/**
+	 * Generate Youtube embed code by video id
+	 * @param  int $video_url Video ID
+	 * @return string            Generated embed code
+	 */
+	public function getVideoThumbnail($video_url)
+	{
+		preg_match("#(?<=v=)[a-zA-Z0-9-]+(?=&)|(?<=v\/)[^&\n]+|(?<=v=)[^&\n]+|(?<=youtu.be/)[^&\n]+#", $video_url, $matches);
+		$video_id = $matches[0];
+		return 'http://img.youtube.com/vi/' . $video_id . '/sddefault.jpg';
+	}
 }

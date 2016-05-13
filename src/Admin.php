@@ -353,17 +353,50 @@ class Admin {
 			'yt-title' => $_POST['youtube-title'],
 			'mc_template' => $_POST['sel-templates'],
 		];
+
 		$data = $this->model->filterNlData($data);
+
 		if ($this->getCapitalId() == $data['segment']) {
-			$campaign_id = $this->newsletter->createCampaign($this->list_id, $data['title'], $data['mc_template'], $data['segment']);
+			$campaign_id = $this->newsletter->createCampaign($this->list_id, $data['title'], $data['segment']);
 		} else {
-			$campaign_id = $this->newsletter->createCampaign($this->list_id, $data['title'], $data['mc_template']);
+			$campaign_id = $this->newsletter->createCampaign($this->list_id, $data['title']);
 		}
-		$data['campaign_id'] = $campaign_id;
+
 		if ($campaign_id) {
+			$data['campaign_id'] = $campaign_id;
+			$sections = $this->getNlSections($data);
+			$this->newsletter->updateCampaign($campaign_id, $data['mc_template'], $sections);
 			$this->model->insertNewsletter($data);
 		} else {
 			echo "MC Campaign creation failed.";
 		}
+	}
+
+	private function getNlSections($data)
+	{
+		$lead = $this->dsz->getMusorById($data['lead-id']);
+
+		$view = new \cncNL\View();
+		if (!empty($data['featured'])) {
+			$featured_shows = $this->model->prepareShowsList($data['featured']['items']);
+			$view->assign('featured_shows', $featured_shows);
+			$featured_html = $view->render('nl-featured-list');
+		}
+		if (!empty($data['recommendations'])) {
+			$recommended_shows = $this->model->prepareShowsList($data['recommendations']['items']);
+			$view->assign('recommended_shows', $recommended_shows);
+			$recommended_html = $view->render('nl-recommended-list');
+		}
+
+		$sections = (object) [
+			'lead_title' => $lead->cim,
+			'lead_image' => '<img src="' . $data['lead-image'] . '" />',
+			'lead_excerpt' => $this->dsz->getMusorExcerpt($data['lead-id']),
+			'featured_list' => $featured_html,
+			'recommended_list' => $recommended_html,
+			'youtube_image' => '<a href="' . $data['yt-url'] . '"><img src="' . $view->getVideoThumbnail($data['yt-url']) . '" /></a>',
+			'youtube_title' => $data['yt-title'],
+		];
+		return $sections;
 	}
 }

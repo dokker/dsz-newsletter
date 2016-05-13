@@ -53,6 +53,38 @@ class Model {
 		return $data;
 	}
 
+	/**
+	 * Create normalized detailed array from given show list
+	 * @param  array $shows_arr List of shows
+	 * @return array            Detailed ahows list
+	 */
+	public function prepareShowsList($shows_arr)
+	{
+		$shows = [];
+		require_once(CNCNL_THEME . CNCNL_DS . 'inc/class/dumaszinhaz.class.php');
+		$this->dsz = new \Dumaszinhaz\Dumaszinhaz();
+		foreach ($shows_arr as $show_id) {
+			$show = $this->dsz->getMusorById($show_id);
+			$show->performers =  $this->preparePerformers($show->alkotok);
+			$shows[] = $show;
+		}
+		return $shows;
+	}
+
+	/**
+	 * Create names string from given performers
+	 * @param  array $performers Performers
+	 * @return string             Performer names list
+	 */
+	private function preparePerformers($performers)
+	{
+		$names = [];
+		foreach ($performers as $performer) {
+			$names[] = $performer->nev;
+		}
+		return implode(', ', $names);
+	}
+
 	public function insertNewsletter($data)
 	{
 	}
