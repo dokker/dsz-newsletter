@@ -390,8 +390,9 @@ class Admin {
 
 		$sections = (object) [
 			'lead_title' => $lead->cim,
-			'lead_image' => '<img src="' . $data['lead-image'] . '" />',
+			'lead_image' => '<img class="head-lead-image" src="' . $data['lead-image'] . '" />',
 			'lead_excerpt' => $this->dsz->getMusorExcerpt($data['lead-id']),
+			'lead_button' => '<a href="' . $lead->seo . '">TOVÁBB >></a>',
 			'featured_list' => $featured_html,
 			'recommended_list' => $recommended_html,
 			'youtube_image' => '<a href="' . $data['yt-url'] . '"><img src="' . $view->getVideoThumbnail($data['yt-url']) . '" /></a>',
