@@ -3,6 +3,8 @@ namespace cncNL;
 
 class Admin {
 	private $dsz;
+	private $message;
+	private $campaign_id = NULL;
 
 	function __construct()
 	{
@@ -41,15 +43,22 @@ class Admin {
 
 
 
-		if (!isset($_POST['nl-form-save'])) {
-			if (!isset($_POST['sel-segments'])) {
-				// segment selector
+		if (!isset($_POST['nl-phase'])) {
+			$phase = 0;
+		} else {
+			$phase = intval($_POST['nl-phase']);
+			$phase++;
+		}
+		switch ($phase) {
+			case 0 :
+				// newsletter sent out
 				$segments = $this->newsletter->getSegments($this->list_id);
 				$segments_list = $this->prepareSegmentsList($segments);
 				$view->assign('list_segments', $view->renderList($segments_list, 'segments', 'sel-segments'));
 				$view->assign('selector', $view->render('admin_selector'));
-				$view->assign('location', false);
-			} else {
+			break;
+			case 1 :
+				// newsletter editor
 				if ($_POST['sel-segments'] == $this->getCapitalId()) {
 					// do Budapest stuff
 					$location = 'bp';
@@ -83,10 +92,20 @@ class Admin {
 				$template_list = $this->prepareTemplateList($templates);
 				$view->assign('list_templates', $view->renderList($template_list, 'templates', 'sel-templates'));
 				$view->assign('mc_template', $view->render('admin_template'));
-			}
-		} else {
-			$this->storeNewsletter();
+			break;
+			case 2 :
+				// campaign created
+				$this->storeNewsletter();
+				$view->assign('campaign_id', $this->campaign_id);
+			break;
+			case 3 :
+				// newsletter sent out
+				$campaign_id = sanitize_text_field($_POST['nl-campaign-id']);
+				$this->executeNewsletter($campaign_id);
+			break;
 		}
+		$view->assign('phase', $phase);
+		$view->assign('message', $this->message);
 		$html = $view->render('admin_index');
 
 		echo $html;

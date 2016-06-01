@@ -119,4 +119,14 @@ class Newsletter
 		];
 		$result = $this->MC->put("campaigns/$campaign_id/content", $args);
 	}
+
+	public function sendCampaign($campaign_id)
+	{
+		$result = $this->MC->post("campaigns/$campaign_id/actions/send");
+		if(!$this->MC->getLastError()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 }
