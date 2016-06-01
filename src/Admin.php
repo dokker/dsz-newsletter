@@ -383,11 +383,27 @@ class Admin {
 
 		if ($campaign_id) {
 			$data['campaign_id'] = $campaign_id;
+			$this->campaign_id = $campaign_id;
 			$sections = $this->getNlSections($data);
 			$this->newsletter->updateCampaign($campaign_id, $data['mc_template'], $sections);
-			$this->model->insertNewsletter($data);
+			if(!$this->model->insertNewsletter($data)) {
+				$this->message = "Error storing campaign details in database.";
+			} else {
+				$this->message = "MC Campaign creation successful.";
+			}
 		} else {
-			echo "MC Campaign creation failed.";
+			$this->message = "MC Campaign creation failed.";
+		}
+	}
+
+	private function executeNewsletter($campaign_id)
+	{
+		if($this->newsletter->sendCampaign($campaign_id)) {
+			$this->message = "Hírlevél kiküldése sikeres.";
+			$this->model->setNlStatus($campaign_id, 1);
+		} else {
+			$this->message = "Hírlevél kiküldése sikertelen.";
+			$this->model->setNlStatus($campaign_id, 9);
 		}
 	}
 

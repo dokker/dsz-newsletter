@@ -19,7 +19,7 @@ class Model {
 				`id` MEDIUMINT(11) NOT NULL AUTO_INCREMENT,
 				`title` VARCHAR(512) NOT NULL,
 				`segment_id` INT(10),
-				`campaign_id` INT(10),
+				`campaign_id` CHAR(15),
 				`lead_id` INT(10),
 				`lead_image` VARCHAR(512),
 				`featured` LONGTEXT,
@@ -27,6 +27,8 @@ class Model {
 				`yt_url` VARCHAR(512),
 				`yt_title` VARCHAR(512),
 				`creation` DATETIME DEFAULT '0000-00-00 00:00:00' NOT NULL,
+				`template_id` INT(10),
+				`status` INT(1),
 				UNIQUE KEY id (id)
 				) $charset_collate;";
 
@@ -85,7 +87,48 @@ class Model {
 		return implode(', ', $names);
 	}
 
+	/**
+	 * Insert campaign data to the db
+	 * @param  array $data Campaign data
+	 * @return int,bool       Affected rows or false
+	 */
 	public function insertNewsletter($data)
 	{
+		$result = $this->db->query($this->db->prepare(
+			"INSERT INTO {$this->db_table}
+			(id, title, segment_id, campaign_id, lead_id, lead_image, featured, recommendations, yt_url, yt_title, creation, template_id, status)
+			VALUES
+			(%s, %s, %d, %s, %d, %s, %s, %s, %s, %s, %s, %d, %d)",
+			[
+				"null",
+				$data['title'],
+				$data['segment'],
+				$data['campaign_id'],
+				$data['lead-id'],
+				$data['lead-image'],
+				serialize($data['featured']),
+				serialize($data['recommendations']),
+				$data['yt-url'],
+				$data['yt-title'],
+				date('Y-m-d H:i:s'),
+				$data['mc_template'],
+				0,
+			]
+		));
+		return $result;
+	}
+
+	/**
+	 * Change campaign status
+	 * @param string $campaign_id Campaign ID
+	 * @param int $status      Status code
+	 */
+	public function setNlStatus($campaign_id, $status)
+	{
+		$this->db->update($this->db_table, 
+			['status' => $status ],
+			['campaign_id' => $campaign_id], 
+			['%d']
+		);
 	}
 }
