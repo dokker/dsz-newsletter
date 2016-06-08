@@ -13,6 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+// load translations
+load_plugin_textdomain( 'dsz-newsletter', false, 'dsz-newsletter/languages' );
 
 /**
  * Initial settings

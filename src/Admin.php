@@ -387,22 +387,22 @@ class Admin {
 			$sections = $this->getNlSections($data);
 			$this->newsletter->updateCampaign($campaign_id, $data['mc_template'], $sections);
 			if(!$this->model->insertNewsletter($data)) {
-				$this->message = "Error storing campaign details in database.";
+				$this->message = __('Error storing campaign details in database.', 'dsz-newsletter');
 			} else {
-				$this->message = "MC Campaign creation successful.";
+				$this->message = __('MC Campaign creation successful.', 'dsz-newsletter');
 			}
 		} else {
-			$this->message = "MC Campaign creation failed.";
+			$this->message = __('MC Campaign creation failed.', 'dsz-newsletter');
 		}
 	}
 
 	private function executeNewsletter($campaign_id)
 	{
 		if($this->newsletter->sendCampaign($campaign_id)) {
-			$this->message = "Hírlevél kiküldése sikeres.";
+			$this->message = __('Successful campaign sending', 'dsz-newsletter');
 			$this->model->setNlStatus($campaign_id, 1);
 		} else {
-			$this->message = "Hírlevél kiküldése sikertelen.";
+			$this->message = __('Failed to send campaign', 'dsz-newsletter');
 			$this->model->setNlStatus($campaign_id, 9);
 		}
 	}
