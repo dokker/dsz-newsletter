@@ -26,6 +26,7 @@ class Model {
 				`recommendations` LONGTEXT,
 				`yt_url` VARCHAR(512),
 				`yt_title` VARCHAR(512),
+				`archive_url` VARCHAR(512),
 				`creation` DATETIME DEFAULT '0000-00-00 00:00:00' NOT NULL,
 				`template_id` INT(10),
 				`status` INT(1),
@@ -96,9 +97,9 @@ class Model {
 	{
 		$result = $this->db->query($this->db->prepare(
 			"INSERT INTO {$this->db_table}
-			(id, title, segment_id, campaign_id, lead_id, lead_image, featured, recommendations, yt_url, yt_title, creation, template_id, status)
+			(id, title, segment_id, campaign_id, lead_id, lead_image, featured, recommendations, yt_url, yt_title, archive_url, creation, template_id, status)
 			VALUES
-			(%s, %s, %d, %s, %d, %s, %s, %s, %s, %s, %s, %d, %d)",
+			(%s, %s, %d, %s, %d, %s, %s, %s, %s, %s, %s, %s, %d, %d)",
 			[
 				"null",
 				$data['title'],
@@ -110,6 +111,7 @@ class Model {
 				serialize($data['recommendations']),
 				$data['yt-url'],
 				$data['yt-title'],
+				$data['archive_url'],
 				date('Y-m-d H:i:s'),
 				$data['mc_template'],
 				0,

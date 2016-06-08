@@ -30,8 +30,25 @@ class Admin {
 		add_submenu_page( 'hirlevel', 'Új hírlevél', 'Új hírlevél', 'moderate_comments', 'hirlevel-add', [$this, 'getAdminCreatePage'] );
 	}
 
+	/**
+	 * Generate Newsletter list page
+	 */
 	public function getAdminListPage()
 	{
+		$view = new \cncNL\View();
+		//Our class extends the WP_List_Table class, so we need to make sure that it's there
+		if(!class_exists('WP_List_Table')){
+			require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
+		}
+		$this->table = new \cncNL\Table();
+		$this->table->prepare_items();
+		ob_start();
+		$this->table->display();
+		$list_table = ob_get_clean();
+
+		$view->assign('list_table', $list_table);
+		$html = $view->render('admin_campaign_list');
+		echo $html;
 	}
 
 	/**
@@ -376,13 +393,15 @@ class Admin {
 		$data = $this->model->filterNlData($data);
 
 		if ($this->getCapitalId() == $data['segment']) {
-			$campaign_id = $this->newsletter->createCampaign($this->list_id, $data['title'], $data['segment']);
+			$response = $this->newsletter->createCampaign($this->list_id, $data['title'], $data['segment']);
 		} else {
-			$campaign_id = $this->newsletter->createCampaign($this->list_id, $data['title']);
+			$response = $this->newsletter->createCampaign($this->list_id, $data['title']);
 		}
 
-		if ($campaign_id) {
+		if ($response) {
+			$campaign_id = $response->id;
 			$data['campaign_id'] = $campaign_id;
+			$data['archive_url'] = $response->archive_url;
 			$this->campaign_id = $campaign_id;
 			$sections = $this->getNlSections($data);
 			$this->newsletter->updateCampaign($campaign_id, $data['mc_template'], $sections);

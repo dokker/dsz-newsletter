@@ -66,9 +66,10 @@ class Newsletter
 			$data['recipients']->segment_opts = new \stdClass;
 			$data['recipients']->segment_opts->saved_segment_id = $segment_id;
 		}
-		$response = $this->MC->post("campaigns", $data);
-		if(!$this->MC->getLastError()) {
-			return $response['id'];
+		$this->MC->post("campaigns", $data);
+		if($this->MC->success()) {
+			$response = $this->MC->getLastResponse();
+			return json_decode($response['body']);
 		} else {
 			return false;
 		}
