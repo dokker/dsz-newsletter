@@ -24,6 +24,7 @@ define('CNCNL_PROJECT_PATH', realpath(dirname(__FILE__)));
 define('CNCNL_PROJECT_URL', plugins_url() . CNCNL_DS . 'dsz-newsletter');
 define('CNCNL_TEMPLATE_DIR', CNCNL_PROJECT_PATH . CNCNL_DS . 'templates');
 define('CNCNL_THEME', get_stylesheet_directory());
+define('CNCNL_TABLE', 'cnc_newsletter');
 
 /**
  * Autoload

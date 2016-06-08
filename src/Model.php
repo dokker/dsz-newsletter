@@ -3,7 +3,7 @@ namespace cncNL;
 
 class Model {
 
-	private $db_table = 'cnc_newsletter';
+	private $db_table = CNCNL_TABLE;
 
 	function __construct()
 	{
@@ -130,5 +130,10 @@ class Model {
 			['campaign_id' => $campaign_id], 
 			['%d']
 		);
+	}
+
+	public function getTableName()
+	{
+		return $this->db_table;
 	}
 }
