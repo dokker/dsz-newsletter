@@ -262,7 +262,10 @@ class Admin {
 		$list = array();
 		if (!empty($shows)) {
 			foreach ($shows as $show) {
-				$list[] = ['label' => $show->cim, 'id' => $show->id];
+				$full_date = strtotime($show->ido);
+				$date = date('y.m.d', $full_date);
+				$label = $show->cim . ' - ' . $date . ' - ' . $show->varos;
+				$list[] = ['label' => $label, 'id' => $show->id];
 			}
 		}
 		return $list;
