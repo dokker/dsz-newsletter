@@ -26,6 +26,7 @@ case 0: ?>
 <?php case 2: ?>
 	<input type="hidden" name="nl-campaign-id" value="<?php echo $campaign_id; ?>" />
     <input type="submit" name="nl-form-execute" value="Hírlevél kiküldése" class="button button-primary" />
+    <div class="preview-area" style="padding-top: 30px;"><?php echo $preview; ?></div>
 <?php break; ?>
 <?php case 3: ?>
 <?php break; ?>

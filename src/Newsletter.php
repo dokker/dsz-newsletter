@@ -110,6 +110,13 @@ class Newsletter
 		}
 	}
 
+	/**
+	 * Update content of specified campaign
+	 * @param  string $campaign_id Campaign ID
+	 * @param  int $template_id Template ID
+	 * @param  object $sections    Content data
+	 * @return string,bool              HTML email or false
+	 */
 	public function updateCampaign($campaign_id, $template_id, $sections)
 	{
 		$args = [
@@ -118,7 +125,12 @@ class Newsletter
 				'sections' => $sections,
 			],
 		];
-		$result = $this->MC->put("campaigns/$campaign_id/content", $args);
+		$response = $this->MC->put("campaigns/$campaign_id/content", $args);
+		if ($this->MC->success()) {
+			return $response['html'];
+		} else {
+			return false;
+		}
 	}
 
 	public function sendCampaign($campaign_id)

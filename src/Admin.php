@@ -5,6 +5,7 @@ class Admin {
 	private $dsz;
 	private $message;
 	private $campaign_id = NULL;
+	private $preview;
 
 	function __construct()
 	{
@@ -114,6 +115,7 @@ class Admin {
 				// campaign created
 				$this->storeNewsletter();
 				$view->assign('campaign_id', $this->campaign_id);
+				$view->assign('preview', $this->preview);
 			break;
 			case 3 :
 				// newsletter sent out
@@ -392,6 +394,7 @@ class Admin {
 
 		$data = $this->model->filterNlData($data);
 
+		// Create campaign based on segment data
 		if ($this->getCapitalId() == $data['segment']) {
 			$response = $this->newsletter->createCampaign($this->list_id, $data['title'], $data['segment']);
 		} else {
@@ -404,7 +407,9 @@ class Admin {
 			$data['archive_url'] = $response->archive_url;
 			$this->campaign_id = $campaign_id;
 			$sections = $this->getNlSections($data);
-			$this->newsletter->updateCampaign($campaign_id, $data['mc_template'], $sections);
+
+			// Add content data to campaign
+			$this->preview = $this->newsletter->updateCampaign($campaign_id, $data['mc_template'], $sections);
 			if(!$this->model->insertNewsletter($data)) {
 				$this->message = __('Error storing campaign details in database.', 'dsz-newsletter');
 			} else {
