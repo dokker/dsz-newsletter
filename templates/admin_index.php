@@ -5,8 +5,12 @@
 <div class="postbox-container" style="width: 98%;">
   <div class="meta-box-sortables ui-sortable">
 	<form action="" method="post" class="nl-form">
-	<?php if(!empty($message)): ?>
-		<p class="nl-message"><?php echo $message; ?></p>
+	<?php if(!empty($messages)): ?>
+        <?php foreach ($messages as $message): ?>
+            <div class="notice <?php echo $message->type; ?>">
+        		<p class="nl-message"><?php echo $message->text; ?></p>
+            </div>
+        <?php endforeach; ?>
 	<?php endif; ?>
 
 <?php switch ($phase):  

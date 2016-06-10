@@ -3,7 +3,7 @@ namespace cncNL;
 
 class Admin {
 	private $dsz;
-	private $message;
+	private $messages = [];
 	private $campaign_id = NULL;
 	private $preview;
 
@@ -124,7 +124,7 @@ class Admin {
 			break;
 		}
 		$view->assign('phase', $phase);
-		$view->assign('message', $this->message);
+		$view->assign('messages', $this->messages);
 		$html = $view->render('admin_index');
 
 		echo $html;
@@ -361,6 +361,19 @@ class Admin {
 		wp_send_json_success(wp_json_encode($details));
 	}
 
+	/**
+	 * Set new message
+	 * @param string $text Message markup
+	 * @param string $type Message type (updated | error | update-nag)
+	 */
+	private function setMessage($text, $type)
+	{
+		$this->messages[] = (object) [
+			'text' => $text,
+			'type' => $type,
+		];
+	}
+
 	private function getCapitalId()
 	{
 		$segments = $this->newsletter->getSegments($this->list_id);
@@ -414,22 +427,22 @@ class Admin {
 			// Add content data to campaign
 			$this->preview = $this->newsletter->updateCampaign($campaign_id, $data['mc_template'], $sections);
 			if(!$this->model->insertNewsletter($data)) {
-				$this->message = __('Error storing campaign details in database.', 'dsz-newsletter');
+				$this->setMessage(__('Error storing campaign details in database.', 'dsz-newsletter'), 'error');
 			} else {
-				$this->message = __('MC Campaign creation successful.', 'dsz-newsletter');
+				$this->setMessage(__('MC Campaign creation successful.', 'dsz-newsletter'), 'updated');
 			}
 		} else {
-			$this->message = __('MC Campaign creation failed.', 'dsz-newsletter');
+			$this->setMessage(__('MC Campaign creation failed.', 'dsz-newsletter'), 'error');
 		}
 	}
 
 	private function executeNewsletter($campaign_id)
 	{
 		if($this->newsletter->sendCampaign($campaign_id)) {
-			$this->message = __('Successful campaign sending', 'dsz-newsletter');
+			$this->setMessage(__('Successful campaign sending', 'dsz-newsletter'), 'updated');
 			$this->model->setNlStatus($campaign_id, 1);
 		} else {
-			$this->message = __('Failed to send campaign', 'dsz-newsletter');
+			$this->setMessage(__('Failed to send campaign', 'dsz-newsletter'), 'error');
 			$this->model->setNlStatus($campaign_id, 9);
 		}
 	}
