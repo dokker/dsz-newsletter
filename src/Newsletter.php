@@ -35,8 +35,10 @@ class Newsletter
 	 */
 	public function getTemplates()
 	{
-		$result = $this->MC->get("templates");
-		if ($result !== false) {
+		// filter user generated templates
+		$data = ['type' => 'user'];
+		$result = $this->MC->get("templates", $data);
+		if ($this->MC->success()) {
 			return $result;
 		}
 	}
