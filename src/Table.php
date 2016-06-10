@@ -122,13 +122,13 @@ class Table extends \WP_List_Table {
 	   		foreach ( $columns as $column_name => $column_display_name ) {
 
 		         //Style attributes for each col
-	   			$class = "class='$column_name column-$column_name'";
+	   			$class = "class='$column_name column-$column_name has-row-actions'";
 	   			$style = "";
 		         // if ( in_array( $column_name, $hidden ) ) $style = ' style="display:none;"';
 	   			$attributes = $class . $style;
 
 		        //edit link
-				$editlink = admin_url('admin.php?page=hirlevel-edit&id='.(int)$rec->id);
+				$editlink = admin_url('admin.php?page=hirlevel&id='.(int)$rec->id.'&action=edit');
 
 				switch ($rec->status) {
 					case 0: $status = __('Waiting', 'dsz-newsletter'); break;
@@ -136,10 +136,16 @@ class Table extends \WP_List_Table {
 					case 9: $status = __('Failed', 'dsz-newsletter'); break;
 				}
 
+				// Create delete action
+				$delete_nonce = wp_create_nonce( 'sp_delete_customer' );
+				$actions = [
+					'delete' => sprintf( '<a href="?page=%s&action=%s&id=%s&_wpnonce=%s">' . __('Delete', 'dsz-newsletter') . '</a>', esc_attr( $_REQUEST['page'] ), 'delete', absint( $rec->id ), $delete_nonce )
+				];
+
 		         //Display the cell
 	   			switch ( $column_name ) {
 	   				case "col_nl_id":  echo '<td '.$attributes.'>'.stripslashes($rec->id).'</td>';   break;
-	   				case "col_nl_title": echo '<td '.$attributes.'><strong><a href="' . $editlink . '">'.stripslashes($rec->title).'</a></strong></td>'; break;
+	   				case "col_nl_title": echo '<td '.$attributes.'><strong><a href="' . $editlink . '">'.stripslashes($rec->title).'</a></strong>' . $this->row_actions( $actions ) . '</td>'; break;
 	   				case "col_nl_campaign": echo '<td '.$attributes.'><a target="_blank" href="' . $rec->archive_url . '">'.stripslashes($rec->campaign_id).'</a></td>'; break;
 	   				case "col_nl_creation": echo '<td '.$attributes.'>'.$rec->creation.'</td>'; break;
 	   				case "col_nl_status": echo '<td '.$attributes.'>'.$status.'</td>'; break;

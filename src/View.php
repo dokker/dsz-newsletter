@@ -26,7 +26,7 @@ class View {
 		return ob_get_clean();
 	}
 
-	public function renderList($data, $class, $name)
+	public function renderList($data, $class, $name, $selected_id = null)
 	{
 		$listdata = [
 			'data' => $data,
@@ -34,7 +34,27 @@ class View {
 			'name' => $name
 		];
 		$this->assign('listdata', $listdata);
+		if ($selected_id !== null) {
+			$this->assign('selected_id', $selected_id);
+		}
 		return $this->render('admin_list');
+	}
+
+	/**
+	 * Get selected shows markup
+	 * @param  array $data Shows data
+	 * @return string       HTML markup
+	 */
+	public function renderSelectedList($data)
+	{
+		$html = '';
+		if (!empty($data)) {
+			foreach ($data as $item) {
+				$html .= sprintf('<li id="items_%d" data-id="%d">%s - %s - %s</li>',
+					$item['id'], $item['id'], $item['title'], $item['date'], $item['location']);
+			}
+		}
+		return $html;
 	}
 
 	/**

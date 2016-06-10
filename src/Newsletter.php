@@ -119,7 +119,7 @@ class Newsletter
 	 * @param  object $sections    Content data
 	 * @return string,bool              HTML email or false
 	 */
-	public function updateCampaign($campaign_id, $template_id, $sections)
+	public function updateCampaignContent($campaign_id, $template_id, $sections)
 	{
 		$args = [
 			'template' => [
@@ -135,11 +135,52 @@ class Newsletter
 		}
 	}
 
+	/**
+	 * Update Campaign data
+	 * @param  string $campaign_id Campaign ID
+	 * @param  array $data        Campaign data
+	 * @return bool              Operation success
+	 */
+	public function updateCampaign($campaign_id, $data)
+	{
+		$args = [
+			'settings' => (object)[
+				'subject_line' => $data['title'],
+			],
+			'recipients' => (object) [
+				'segment_opts' => (object) [
+					'saved_segment_id' => $data['segment'],
+				],
+			],
+		];
+		$this->MC->patch("campaigns/$campaign_id", $args);
+		if ($this->MC->success()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	public function sendCampaign($campaign_id)
 	{
 		$result = $this->MC->post("campaigns/$campaign_id/actions/send");
 		if(!$this->MC->getLastError()) {
 			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * Get campaign arhive ulr (using in lists is resource heavy)
+	 * @param  string $camaign_id Campaign ID
+	 * @return string,bool             Archive url or false
+	 */
+	public function getArchiveUrl($campaign_id)
+	{
+		$result = $this->MC->get("campaigns/$campaign_id");
+		if ($this->MC->success()) {
+			return $result['archive_url'];
 		} else {
 			return false;
 		}

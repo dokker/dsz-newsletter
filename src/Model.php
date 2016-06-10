@@ -57,6 +57,30 @@ class Model {
 	}
 
 	/**
+	 * Sanitize campaign data for update
+	 * @param  array $raw Unfiltered data
+	 * @return arra      Filtered data
+	 */
+	public function filterUpdateNlData($raw)
+	{
+		parse_str($raw['featured'], $featured);
+		parse_str($raw['recommendations'], $recommendations);
+		$data = [
+			'id' => intval($raw['id']),
+			'title' => sanitize_text_field($raw['title']),
+			'segment' => intval($raw['segment']),
+			'lead-id' => intval($raw['lead-id']),
+			'lead-image' => esc_url($raw['lead-image']),
+			'featured' => $featured,
+			'recommendations' => $recommendations,
+			'yt-url' => esc_url($raw['yt-url']),
+			'yt-title' => sanitize_text_field($raw['yt-title']),
+			'mc_template' => intval($raw['mc_template']),
+		];
+		return $data;
+	}
+
+	/**
 	 * Create normalized detailed array from given show list
 	 * @param  array $shows_arr List of shows
 	 * @return array            Detailed ahows list
@@ -120,6 +144,36 @@ class Model {
 		return $result;
 	}
 
+	public function updateNewsletter($data)
+	{
+		$this->db->update($this->db_table, 
+			[
+				'title' => $data['title'],
+				'segment_id' => $data['segment'],
+				'lead_id' => $data['lead-id'],
+				'lead_image' => $data['lead-image'],
+				'featured' => serialize($data['featured']),
+				'recommendations' => serialize($data['recommendations']),
+				'yt_url' => $data['yt-url'],
+				'yt_title' => $data['yt-title'],
+				'template_id' => $data['mc_template'],
+			],
+			['id' => $data['id']], 
+			['%s', '%d', '%d', '%s', '%s', '%s', '%s', '%s', '%d']
+		);
+	}
+
+	/**
+	 * Get newsletter by ID
+	 * @param  int $id ID of the stored newsletter
+	 * @return object,null     Result object or null
+	 */
+	public function getNewsletter($id)
+	{
+		$query = "SELECT * FROM {$this->db_table} WHERE id={$id}";
+		return $this->db->get_row($query);
+	}
+
 	/**
 	 * Change campaign status
 	 * @param string $campaign_id Campaign ID
@@ -137,5 +191,16 @@ class Model {
 	public function getTableName()
 	{
 		return $this->db_table;
+	}
+
+	/**
+	 * Get MC ampaign id by db ID
+	 * @param  int $id ID in the db
+	 * @return int     Campaign ID
+	 */
+	public function getCampaignIdByID($id)
+	{
+		$query = "SELECT campaign_id FROM {$this->db_table} WHERE id={$id}";
+		return $this->db->get_var($query);
 	}
 }

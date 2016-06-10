@@ -11,7 +11,7 @@
             <div class="lead-image"><img src="<?php echo $lead_show['image']; ?>" alt="<?php echo $lead_show['title']; ?>" /></div>
             <button class="lead-image-reset button">Alapértelmezett kép visszaállítása</button>
             <label class="screen-reader-text" for="upload_image">Fejléckép</label>
-            <input id="upload_image" type="hidden" size="36" name="upload_image" value="" />
+            <input id="upload_image" type="hidden" size="36" name="upload_image" value="<?php if(isset($lead_image)) echo $lead_image; ?>" />
             <input id="upload_image_button" class="button" type="button" value="Lead kép cseréje" />
             <input type="hidden" name="lead-id" value="<?php echo $lead_show['id']; ?>" />
           </div>

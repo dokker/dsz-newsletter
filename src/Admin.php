@@ -37,18 +37,87 @@ class Admin {
 	public function getAdminListPage()
 	{
 		$view = new \cncNL\View();
-		//Our class extends the WP_List_Table class, so we need to make sure that it's there
-		if(!class_exists('WP_List_Table')){
-			require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
-		}
-		$this->table = new \cncNL\Table();
-		$this->table->prepare_items();
-		ob_start();
-		$this->table->display();
-		$list_table = ob_get_clean();
 
-		$view->assign('list_table', $list_table);
-		$html = $view->render('admin_campaign_list');
+		if (isset($_GET['action']))	{
+			if (!isset($_POST['nl-phase'])) {
+				$phase = 0;
+			} else {
+				$phase = intval($_POST['nl-phase']);
+				$phase++;
+			}
+			$id = intval($_GET['id']);
+			switch ($_GET['action']) {
+				case 'edit':
+					if (isset($_POST['nl-form-save'])) {
+						$this->updateNewsletter();
+					}
+					$nl_data = $this->model->getNewsletter($id);
+
+					$view->assign('page_title', __('Edit Newsletter', 'dsz-newsletter'));
+					$view->assign('action', 'edit');
+
+					$view->assign('campaign_title', $nl_data->title);
+					$view->assign('admin_title', $view->render('admin_title'));
+					// create recommended shows markup
+					$show_list = $this->listifyShowsList($this->getRecommendedShows());
+					
+					$segments = $this->newsletter->getSegments($this->list_id);
+					$segments_list = $this->prepareSegmentsList($segments);
+					$view->assign('list_segments', $view->renderList($segments_list, 'segments', 'sel-segments', $nl_data->segment_id));
+					$view->assign('selector', $view->render('admin_selector'));
+
+					$lead_show = $this->getLeadShowDetails($this->getShowById($nl_data->lead_id), $nl_data->lead_image);
+					$view->assign('lead_image', $nl_data->lead_image);
+					$view->assign('list_shows_recommended_lead', $view->renderList($show_list, 'sel-lead-recommendations', 'sel-lead-recommendations'));
+					$view->assign('lead_show', $lead_show);
+					$view->assign('lead', $view->render('admin_lead'));
+
+					// create featured shows markup
+					$selected_featured_list = $this->listifySelectedList($nl_data->featured);
+					$view->assign('list_selected_featured', $view->renderSelectedList($selected_featured_list));
+
+					$view->assign('list_shows_featured', $view->renderList($show_list, 'shows-featured', 'sel-featured'));
+					$view->assign('featured', $view->render('admin_featured'));
+
+					// recommended shows list
+					$selected_recommended_list = $this->listifySelectedList($nl_data->recommendations);
+					$view->assign('list_selected_recommended', $view->renderSelectedList($selected_recommended_list));
+
+					$view->assign('list_shows_recommended', $view->renderList($show_list, 'shows-recommended', 'sel-recommendations'));
+					$view->assign('recommendations', $view->render('admin_recommendations'));
+
+					$view->assign('yt_url', $nl_data->yt_url);
+					$view->assign('yt_title', $nl_data->yt_title);
+					$view->assign('youtube', $view->render('admin_youtube'));
+					$view->assign('segment', $nl_data->segment_id);
+
+					$templates = $this->newsletter->getTemplates();
+					$template_list = $this->prepareTemplateList($templates);
+					$view->assign('selected_id', $nl_data->template_id);
+					$view->assign('list_templates', $view->renderList($template_list, 'templates', 'sel-templates'));
+					$view->assign('mc_template', $view->render('admin_template'));
+				break;
+				case 'delete':
+					$view->assign('page_title', __('Delete Newsletter', 'dsz-newsletter'));
+				break;
+			}
+			$view->assign('phase', $phase);
+			$view->assign('messages', $this->messages);
+			$html = $view->render('admin_index');
+		} else {
+			//Our class extends the WP_List_Table class, so we need to make sure that it's there
+			if(!class_exists('WP_List_Table')){
+				require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
+			}
+			$this->table = new \cncNL\Table();
+			$this->table->prepare_items();
+			ob_start();
+			$this->table->display();
+			$list_table = ob_get_clean();
+
+			$view->assign('list_table', $list_table);
+			$html = $view->render('admin_campaign_list');
+		}
 		echo $html;
 	}
 
@@ -84,7 +153,7 @@ class Admin {
 					// do Videk stuff
 					$location = 'videk';
 				}
-				$view->assign('title', $view->render('admin_title'));
+				$view->assign('admin_title', $view->render('admin_title'));
 				// create recommended shows markup
 				$show_list = $this->listifyShowsList($this->getRecommendedShows());
 				
@@ -123,6 +192,7 @@ class Admin {
 				$this->executeNewsletter($campaign_id);
 			break;
 		}
+		$view->assign('page_title', __('Create Newsletter'));
 		$view->assign('phase', $phase);
 		$view->assign('messages', $this->messages);
 		$html = $view->render('admin_index');
@@ -131,7 +201,7 @@ class Admin {
 	}
 
 	public function registerAdminScripts($hook_suffix) {
-		if ($hook_suffix == 'hirlevel_page_hirlevel-add') {
+		if ($hook_suffix == 'hirlevel_page_hirlevel-add' || $hook_suffix == 'toplevel_page_hirlevel') {
 			wp_register_script('nl-script', CNCNL_PROJECT_URL . CNCNL_DS . 'assets/js/admin.js', array('jquery','media-upload','thickbox'));
 			wp_enqueue_script('nl-script');
 			// scripts for metaboxes
@@ -173,7 +243,7 @@ class Admin {
 	}
 
 	public function registerAdminStyles($hook_suffix) {
-		if ($hook_suffix == 'hirlevel_page_hirlevel-add') {
+		if ($hook_suffix == 'hirlevel_page_hirlevel-add' || $hook_suffix == 'toplevel_page_hirlevel') {
 			wp_enqueue_style( 'nl-style' , CNCNL_PROJECT_URL . CNCNL_DS . 'assets/css/admin.css');
 			wp_enqueue_style('thickbox');
 		}
@@ -194,14 +264,18 @@ class Admin {
 	/**
 	 * Sipmlify show data structure
 	 * @param  object $show Show object
+	 * @param string $image Image URL
 	 * @return array       Simplified data
 	 */
-	private function getLeadShowDetails($show)
+	private function getLeadShowDetails($show, $image = null)
 	{
+		if ($image === null) {
+			$image = $this->cropLeadImage($show->eloadas_kepek[0]->original, true);
+		}
 		$details = [
 			'id' => $show->id,
 			'title' => $show->cim,
-			'image' => $this->cropLeadImage($show->eloadas_kepek[0]->original, true),
+			'image' => $image,
 			'date' => $show->ido,
 			'location' => $show->helyszin_nev,
 		];
@@ -262,8 +336,7 @@ class Admin {
 		$list = array();
 		if (!empty($shows)) {
 			foreach ($shows as $show) {
-				$full_date = strtotime($show->ido);
-				$date = date('y.m.d', $full_date);
+				$date = $this->datetimeToShort($show->ido);
 				$label = $show->cim . ' - ' . $date . ' - ' . $show->varos;
 				$list[] = ['label' => $label, 'id' => $show->id];
 			}
@@ -425,7 +498,7 @@ class Admin {
 			$sections = $this->getNlSections($data);
 
 			// Add content data to campaign
-			$this->preview = $this->newsletter->updateCampaign($campaign_id, $data['mc_template'], $sections);
+			$this->preview = $this->newsletter->updateCampaignContent($campaign_id, $data['mc_template'], $sections);
 			if(!$this->model->insertNewsletter($data)) {
 				$this->setMessage(__('Error storing campaign details in database.', 'dsz-newsletter'), 'error');
 			} else {
@@ -433,6 +506,40 @@ class Admin {
 			}
 		} else {
 			$this->setMessage(__('MC Campaign creation failed.', 'dsz-newsletter'), 'error');
+		}
+	}
+
+	/**
+	 * Handle updating newsletter data
+	 */
+	private function updateNewsletter()
+	{
+		$data = [
+			'id' => $_GET['id'],
+			'title' => $_POST['input-title'],
+			'segment' => $_POST['sel-segments'],
+			'lead-id' => $_POST['lead-id'],
+			'lead-image' => $_POST['upload_image'],
+			'featured' => $_POST['input-featured'],
+			'recommendations' => $_POST['input-recommendations'],
+			'yt-url' => $_POST['youtube-url'],
+			'yt-title' => $_POST['youtube-title'],
+			'mc_template' => $_POST['sel-templates'],
+		];
+
+		$data = $this->model->filterUpdateNlData($data);
+
+		$campaign_id = $this->model->getCampaignIdByID($data['id']);
+		if ($this->newsletter->updateCampaign($campaign_id, $data)) {
+			$sections = $this->getNlSections($data);
+			if ($this->newsletter->updateCampaignContent($campaign_id, $data['mc_template'], $sections)) {
+				$this->model->updateNewsletter($data);
+				$this->setMessage(__('Campaign data updated', 'dsz-newsletter'), 'updated');
+			} else {
+				$this->setMessage(__('Error updating campaign content', 'dsz-newsletter'), 'error');
+			}
+		} else {
+			$this->setMessage(__('Error updating campaign data', 'dsz-newsletter'), 'error');
 		}
 	}
 
@@ -463,6 +570,11 @@ class Admin {
 			$recommended_html = $view->render('nl-recommended-list');
 		}
 
+		if(!empty($data['yt-url'])) {
+			$yt_image = '<a href="' . $data['yt-url'] . '"><img src="' . $view->getVideoThumbnail($data['yt-url']) . '" /></a>';
+		} else {
+			$yt_image = '';
+		}
 		$sections = (object) [
 			'lead_title' => $lead->cim,
 			'lead_image' => '<img class="head-lead-image" src="' . $data['lead-image'] . '" />',
@@ -470,9 +582,43 @@ class Admin {
 			'lead_button' => '<a href="' . $lead->seo . '">TOVÁBB >></a>',
 			'featured_list' => $featured_html,
 			'recommended_list' => $recommended_html,
-			'youtube_image' => '<a href="' . $data['yt-url'] . '"><img src="' . $view->getVideoThumbnail($data['yt-url']) . '" /></a>',
+			'youtube_image' => $yt_image,
 			'youtube_title' => $data['yt-title'],
 		];
 		return $sections;
+	}
+
+	/**
+	 * Create a list from give serialized data
+	 * @param  string $data Serialized data
+	 * @return array       Structured data
+	 */
+	private function listifySelectedList($data)
+	{
+		$data = unserialize($data);
+		$list = [];
+		foreach ($data['items'] as $show_id) {
+			$show = $this->dsz->getMusorById($show_id);
+
+			$date = $this->datetimeToShort($show->ido);
+			$list[] = [
+				'id' => $show->id,
+				'title' => $show->cim,
+				'date' => $date,
+				'location' => $show->helyszin_nev,
+			];
+		}
+		return $list;
+	}
+
+	/**
+	 * Convert db datetime to shorter format
+	 * @param  string $datetime Datetime format
+	 * @return string           Shorter date format
+	 */
+	public function datetimeToShort($datetime)
+	{
+		$full_date = strtotime($datetime);
+		return date('y.m.d', $full_date);
 	}
 }
