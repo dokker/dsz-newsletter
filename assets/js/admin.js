@@ -70,7 +70,7 @@ jQuery(document).ready(function($) {
       id = $(this).prev().val();
       if (!findInList($list, id)) {
         label = $(this).prev().find('option:selected').text();
-        var item = '<li id="items_' + id + '" data-id="' + id + '">' + label + '</li>';
+        var item = '<li id="items_' + id + '" data-id="' + id + '">' + label + '<button type="button" class="delete"></button></li>';
         $list.append(item);
       } else {
         messageDialog('Ütközés', 'Ez az előadás már szerepel a listában.');
@@ -105,6 +105,12 @@ jQuery(document).ready(function($) {
     });
   }
 
+  function handle_item_delete () {
+    $('.nl-sortable').on('click', '.delete', function () {
+      $(this).parent().remove();
+    });
+  }
+
   /**
    * Initialize the newsletter generation form
    */
@@ -112,6 +118,7 @@ jQuery(document).ready(function($) {
     handle_choice($('.add_recommendation'), $('.nl-sortable.recommendations'));
     handle_choice($('.add_featured'), $('.nl-sortable.featured'));
     handle_lead_creation();
+    handle_item_delete();
   }
 
   init_nl_form();

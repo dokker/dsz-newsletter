@@ -2,6 +2,37 @@
 	background: #fee;
 	padding: 3px;
 	cursor: pointer;
+	position: relative;
+}
+
+.nl-sortable .delete {
+	position: absolute;
+	top: 0;
+	right: 1px;
+	border: none;
+	margin: 0;
+	padding: 2px;
+	background: 0 0;
+	color: #b4b9be;
+	cursor: pointer;
+}
+
+.nl-sortable .delete::before {
+	background: 0 0;
+	color: #b4b9be;
+	content: "\f153";
+	display: block;
+	font: 400 16px/20px dashicons;
+	speak: none;
+	height: 20px;
+	text-align: center;
+	width: 20px;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+.nl-sortable .delete:hover::before {
+    color: #c00;
 }
 
 .lead .lead-image-reset,
