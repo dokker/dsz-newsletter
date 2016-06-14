@@ -83,6 +83,7 @@ jQuery(document).ready(function($) {
       $('.lead-date span').text(data.date);
       $('.lead-location span').text(data.location);
       $('.lead-image img').attr('src', data.image + '?timestamp=' + new Date().getTime());
+      $('.lead-id').val(data.id);
   }
 
   function handle_lead_creation() {
