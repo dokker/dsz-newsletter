@@ -192,7 +192,7 @@ class Admin {
 				$this->executeNewsletter($campaign_id);
 			break;
 		}
-		$view->assign('page_title', __('Create Newsletter'));
+		$view->assign('page_title', __('Create Newsletter', 'dsz-newsletter'));
 		$view->assign('phase', $phase);
 		$view->assign('messages', $this->messages);
 		$html = $view->render('admin_index');

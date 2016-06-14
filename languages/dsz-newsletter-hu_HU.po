@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: dsz Newsletter generator\n"
-"POT-Creation-Date: 2016-06-08 14:16+0200\n"
-"PO-Revision-Date: 2016-06-09 13:22+0200\n"
+"POT-Creation-Date: 2016-06-14 13:57+0200\n"
+"PO-Revision-Date: 2016-06-14 13:57+0200\n"
 "Last-Translator: docker <dock3r@gmail.com>\n"
 "Language-Team: colorandcode <denes@colorandcode.hu>\n"
 "Language: hu_HU\n"
@@ -12,27 +12,51 @@ msgstr ""
 "X-Generator: Poedit 1.8.7.1\n"
 "X-Poedit-Basepath: ..\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Poedit-KeywordsList: __\n"
+"X-Poedit-KeywordsList: __;_e\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: src/Admin.php:407
+#: src/Admin.php:56
+msgid "Edit Newsletter"
+msgstr "Hírlevél szerkesztése"
+
+#: src/Admin.php:101
+msgid "Delete Newsletter"
+msgstr "Hírlevél törlése"
+
+#: src/Admin.php:195
+msgid "Create Newsletter"
+msgstr "Hírlevél létrehozása"
+
+#: src/Admin.php:503
 msgid "Error storing campaign details in database."
 msgstr "Hiba a kampány adatainak tárolása során."
 
-#: src/Admin.php:409
+#: src/Admin.php:505
 msgid "MC Campaign creation successful."
 msgstr "MC kampány létrehozása sikeres"
 
-#: src/Admin.php:412
+#: src/Admin.php:508
 msgid "MC Campaign creation failed."
 msgstr "MC kampány létrehozása sikertelen"
 
-#: src/Admin.php:419
+#: src/Admin.php:537
+msgid "Campaign data updated"
+msgstr "A kampány adatai módosultak"
+
+#: src/Admin.php:539
+msgid "Error updating campaign content"
+msgstr "Hiba a kampány tartalmának módosítása közben"
+
+#: src/Admin.php:542
+msgid "Error updating campaign data"
+msgstr "Hiba a kampány adatainak módosítása közben"
+
+#: src/Admin.php:549
 msgid "Successful campaign sending"
 msgstr "Sikeres kampány kiküldés"
 
-#: src/Admin.php:422
+#: src/Admin.php:552
 msgid "Failed to send campaign"
 msgstr "Sikertelen kampány kiküldés"
 
@@ -56,14 +80,46 @@ msgstr "Létrehozás"
 msgid "Status"
 msgstr "Státusz"
 
-#: src/Table.php:138
+#: src/Table.php:134
 msgid "Waiting"
 msgstr "Várakozik"
 
-#: src/Table.php:139
+#: src/Table.php:135
 msgid "Sent"
 msgstr "Elküldve"
 
-#: src/Table.php:140
+#: src/Table.php:136
 msgid "Failed"
 msgstr "Sikertelen"
+
+#: src/Table.php:142
+msgid "Delete"
+msgstr "Törlés"
+
+#: templates/admin_campaign_list.php:2
+msgid "Newsletter campaigns"
+msgstr "Hírlevél kampányok"
+
+#: templates/admin_campaign_list.php:2
+msgid "Add new"
+msgstr "Új hozzáadása"
+
+#: templates/admin_index.php:26
+msgid "Edit campaign"
+msgstr "Kampány szerkesztése"
+
+#: templates/admin_index.php:42
+msgid "Create campaign"
+msgstr "Kampány létrehozása"
+
+#: templates/admin_index.php:46
+msgid "Send campaign"
+msgstr "Kampány kiküldése"
+
+#: templates/admin_selector.php:3
+msgid "Segment"
+msgstr "Szegmens"
+
+#: templates/admin_selector.php:8
+msgid "Select"
+msgstr "Választás"

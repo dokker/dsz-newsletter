@@ -39,11 +39,11 @@
         <?php echo $youtube; ?>
         <?php echo $mc_template; ?>
         <input type="hidden" name="input-segment" value="<?php echo $segment; ?>" />
-        <input type="submit" name="nl-form-save" value="Kampány létrehozása" class="button button-primary" />
+        <input type="submit" name="nl-form-save" value="<?php _e('Create campaign', 'dsz-newsletter') ?>"; class="button button-primary" />
     <?php break; ?>
     <?php case 2: ?>
         <input type="hidden" name="nl-campaign-id" value="<?php echo $campaign_id; ?>" />
-        <input type="submit" name="nl-form-execute" value="Hírlevél kiküldése" class="button button-primary" />
+        <input type="submit" name="nl-form-execute" value="<?php _e('Send campaign', 'dsz-newsletter') ?>"; class="button button-primary" />
         <div class="preview-area" style="padding-top: 30px;"><?php echo $preview; ?></div>
     <?php break; ?>
     <?php case 3: ?>

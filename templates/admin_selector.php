@@ -5,7 +5,7 @@
         <div class="newsletter-type-selector">
           <?php echo $list_segments; ?>
           <?php if(!isset($action)): ?>
-            <input class="button button-secondary add_segment" type="submit" value="Választás" />
+            <input class="button button-secondary add_segment" type="submit" value="<?php _e('Select', 'dsz-newsletter'); ?>" />
           <?php endif; ?>
         </div>
       </div>
