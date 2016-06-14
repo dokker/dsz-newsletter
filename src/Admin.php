@@ -38,7 +38,7 @@ class Admin {
 	{
 		$view = new \cncNL\View();
 
-		if (isset($_GET['action']))	{
+		if (isset($_GET['action']) && $_GET['action'] != 'delete')	{
 			if (!isset($_POST['nl-phase'])) {
 				$phase = 0;
 			} else {
@@ -97,14 +97,16 @@ class Admin {
 					$view->assign('list_templates', $view->renderList($template_list, 'templates', 'sel-templates'));
 					$view->assign('mc_template', $view->render('admin_template'));
 				break;
-				case 'delete':
-					$view->assign('page_title', __('Delete Newsletter', 'dsz-newsletter'));
-				break;
 			}
 			$view->assign('phase', $phase);
 			$view->assign('messages', $this->messages);
 			$html = $view->render('admin_index');
 		} else {
+			// Init campaign deletion
+			if(isset($_GET['action']) && $_GET['action'] == 'delete') {
+				$this->deleteNewsletter();
+			}
+
 			//Our class extends the WP_List_Table class, so we need to make sure that it's there
 			if(!class_exists('WP_List_Table')){
 				require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
@@ -116,6 +118,7 @@ class Admin {
 			$list_table = ob_get_clean();
 
 			$view->assign('list_table', $list_table);
+			$view->assign('messages', $this->messages);
 			$html = $view->render('admin_campaign_list');
 		}
 		echo $html;
@@ -540,6 +543,33 @@ class Admin {
 			}
 		} else {
 			$this->setMessage(__('Error updating campaign data', 'dsz-newsletter'), 'error');
+		}
+	}
+
+	/**
+	 * Handle newsletter deletion
+	 */
+	private function deleteNewsletter()
+	{
+	    // Verify the nonce.
+		$nonce = esc_attr( $_REQUEST['_wpnonce'] );
+		if ( !wp_verify_nonce( $nonce, 'nl_delete_campaign' ) ) {
+			die( 'Go get a life script kiddies' );
+		}
+
+		$stored_id = intval($_GET['id']);
+		$deletable_nl = $this->model->getNewsletter($stored_id);
+		$mc_res = $this->newsletter->deleteCampaign($deletable_nl->campaign_id);
+		$db_res = $this->model->deleteNewsletter($stored_id);
+		if ($mc_res && $db_res) {
+			$this->setMessage(sprintf(__('<i>%s</i> successfully deleted.', 'dsz-newsletter'), $deletable_nl->title), 'updated');
+		} else {
+			if (!$mc_res) {
+				$this->setMessage(__('Error deleting Mailchimp campaign', 'dsz_newsletter'), 'error');
+			}
+			if (!$db_res) {
+				$this->setMessage(__('Error deleting saved newsletter', 'dsz_newsletter'), 'error');
+			}
 		}
 	}
 

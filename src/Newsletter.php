@@ -185,4 +185,19 @@ class Newsletter
 			return false;
 		}
 	}
+
+	/**
+	 * Delete selected campaign
+	 * @param  string $campaign_id Campaign ID
+	 * @return bool              Deletion success
+	 */
+	public function deleteCampaign($campaign_id)
+	{
+		$this->MC->delete("campaigns/$campaign_id");
+		if (!$this->MC->getLastError()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 }

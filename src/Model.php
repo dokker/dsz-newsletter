@@ -164,6 +164,17 @@ class Model {
 	}
 
 	/**
+	 * Delete newsletter from WP database
+	 * @param  int $id Newsletter ID
+	 * @return int,bool     Affected rows or false
+	 */
+	public function deleteNewsletter($id)
+	{
+		$result = $this->db->delete($this->db_table, ['id' => $id], ['%d']);
+		return $result;
+	}
+
+	/**
 	 * Get newsletter by ID
 	 * @param  int $id ID of the stored newsletter
 	 * @return object,null     Result object or null

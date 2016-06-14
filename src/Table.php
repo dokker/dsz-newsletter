@@ -137,7 +137,7 @@ class Table extends \WP_List_Table {
 				}
 
 				// Create delete action
-				$delete_nonce = wp_create_nonce( 'sp_delete_customer' );
+				$delete_nonce = wp_create_nonce( 'nl_delete_campaign' );
 				$actions = [
 					'delete' => sprintf( '<a href="?page=%s&action=%s&id=%s&_wpnonce=%s">' . __('Delete', 'dsz-newsletter') . '</a>', esc_attr( $_REQUEST['page'] ), 'delete', absint( $rec->id ), $delete_nonce )
 				];

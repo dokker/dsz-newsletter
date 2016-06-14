@@ -4,6 +4,14 @@
 		<div class="metabox-holder columns-2">
 			<div id="post-body-content" class="postbox-container" style="width: 98%;">
 				<div class="meta-box-sortables ui-sortable">
+				<?php if(!empty($messages)): ?>
+			        <?php foreach ($messages as $message): ?>
+			            <div class="notice <?php echo $message->type; ?>">
+			        		<p class="nl-message"><?php echo $message->text; ?></p>
+			            </div>
+			        <?php endforeach; ?>
+				<?php endif; ?>
+
 				<?php echo $list_table; ?>
 				</div>
 			</div>
