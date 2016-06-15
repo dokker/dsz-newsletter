@@ -9,11 +9,21 @@ class View {
 	{
 	}
 
+	/**
+	 * Assign new value to data stack
+	 * @param  string $variable Variable name
+	 * @param  mixed $value    Value of the variable
+	 */
 	public function assign($variable, $value)
 	{
 		$this->data[$variable] = $value;
 	}
 
+	/**
+	 * Render content using the given template file
+	 * @param  string $template Template file name without extension
+	 * @return string           Generated HTML markup
+	 */
 	public function render($template)
 	{
 		extract($this->data);
@@ -26,6 +36,14 @@ class View {
 		return ob_get_clean();
 	}
 
+	/**
+	 * Generate select list markup
+	 * @param  array $data        List data
+	 * @param  string $class       CSS class of select
+	 * @param  string $name        Name of select
+	 * @param  string $selected_id ID of selected item
+	 * @return string              HTML markup of the select
+	 */
 	public function renderList($data, $class, $name, $selected_id = null)
 	{
 		$listdata = [

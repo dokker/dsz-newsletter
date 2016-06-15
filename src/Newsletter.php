@@ -180,6 +180,11 @@ class Newsletter
 		}
 	}
 
+	/**
+	 * Send MC campaign
+	 * @param  string $campaign_id Campaign ID
+	 * @return bool              Success
+	 */
 	public function sendCampaign($campaign_id)
 	{
 		$result = $this->MC->post("campaigns/$campaign_id/actions/send");

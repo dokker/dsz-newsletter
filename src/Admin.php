@@ -2,10 +2,10 @@
 namespace cncNL;
 
 class Admin {
-	private $dsz;
-	private $messages = [];
+	private $dsz; // for Dumaszinhaz object
+	private $messages = []; // for status messages
 	private $campaign_id = NULL;
-	private $preview;
+	private $preview; // for campaign preview makup
 
 	function __construct()
 	{
@@ -24,6 +24,9 @@ class Admin {
 		$this->model = new \cncNL\Model();
 	}
 
+	/**
+	 * Register admin menu items
+	 */
 	public function registerAdminMenu()
 	{
 		add_menu_page('Hírlevél', 'Hírlevél',  'moderate_comments', 'hirlevel',  [$this, 'getAdminListPage'], 'dashicons-email-alt', '55.8');
@@ -203,6 +206,10 @@ class Admin {
 		echo $html;
 	}
 
+	/**
+	 * Register scripts for admin interface
+	 * @param  string $hook_suffix Hook suffix
+	 */
 	public function registerAdminScripts($hook_suffix) {
 		if ($hook_suffix == 'hirlevel_page_hirlevel-add' || $hook_suffix == 'toplevel_page_hirlevel') {
 			wp_register_script('nl-script', CNCNL_PROJECT_URL . CNCNL_DS . 'assets/js/admin.js', array('jquery','media-upload','thickbox'));
@@ -450,6 +457,22 @@ class Admin {
 		];
 	}
 
+	/**
+	 * Get segment name by id
+	 * @param  int $id Segment ID
+	 * @return string,bool     Segment name or false
+	 */
+	private function getSegmentNameById($id)
+	{
+		$segments = $this->newsletter->getSegments($this->list_id);
+		foreach ($segments['segments'] as $segment) {
+			if ($segment['id'] == $id) {
+				return $segment['name'];
+			}
+		}
+		return false;
+	}
+
 	private function getCapitalId()
 	{
 		$segments = $this->newsletter->getSegments($this->list_id);
@@ -573,6 +596,10 @@ class Admin {
 		}
 	}
 
+	/**
+	 * Handle campaign send
+	 * @param  string $campaign_id Campaign ID
+	 */
 	private function executeNewsletter($campaign_id)
 	{
 		if($this->newsletter->sendCampaign($campaign_id)) {
@@ -584,6 +611,11 @@ class Admin {
 		}
 	}
 
+	/**
+	 * Generate campaign content sections
+	 * @param  array $data Given newsletter data
+	 * @return object       Campaign content sections
+	 */
 	private function getNlSections($data)
 	{
 		$lead = $this->dsz->getMusorById($data['lead-id']);
