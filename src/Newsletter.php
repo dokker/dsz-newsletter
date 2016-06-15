@@ -23,10 +23,16 @@ class Newsletter
 	 */
 	public function getSegments($list_id)
 	{
-		$result = $this->MC->get("lists/$list_id/segments");
-		if ($result !== false) {
-			return $result;
+		// check stored results
+		if (false === ($stored = get_transient('cnc_mc_segments'))) {
+			$result = $this->MC->get("lists/$list_id/segments");
+			if ($result !== false) {
+				set_transient('cnc_mc_segments', $result, 3 * HOUR_IN_SECONDS);
+			}
+		} else {
+			$result = $stored;
 		}
+		return $result;
 	}
 
 	/**
@@ -35,12 +41,18 @@ class Newsletter
 	 */
 	public function getTemplates()
 	{
-		// filter user generated templates
-		$data = ['type' => 'user'];
-		$result = $this->MC->get("templates", $data);
-		if ($this->MC->success()) {
-			return $result;
+		// check stored results
+		if (false === ($stored = get_transient('cnc_mc_templates'))) {
+			// filter user generated templates
+			$data = ['type' => 'user'];
+			$result = $this->MC->get("templates", $data);
+			if ($this->MC->success()) {
+				set_transient('cnc_mc_templates', $result, 6 * HOUR_IN_SECONDS);
+			}
+		} else {
+			$result = $stored;
 		}
+		return $result;
 	}
 
 	/**
@@ -84,10 +96,17 @@ class Newsletter
 	 */
 	private function getCampaignDefaults($list_id)
 	{
-		$result = $this->MC->get("lists/$list_id");
-		if ($result !== false) {
-			return $result['campaign_defaults'];
+		// check stored results
+		if (false === ($stored = get_transient('cnc_mc_campaign_defaults'))) {
+			$result = $this->MC->get("lists/$list_id");
+			if ($result !== false) {
+				$defaults = $result['campaign_defaults'];
+				set_transient('cnc_mc_campaign_defaults', $defaults, 6 * HOUR_IN_SECONDS);
+			}
+		} else {
+			$defaults = $stored;
 		}
+		return $defaults;
 	}
 
 	/**
