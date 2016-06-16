@@ -65,3 +65,7 @@
 	display: inline-block;
 	width: 400px;
 }
+
+.nl-sortable .ui-sortable-helper {
+	background: #e66;
+}

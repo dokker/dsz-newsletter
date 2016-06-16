@@ -139,7 +139,9 @@ class Table extends \WP_List_Table {
 				// Create delete action
 				$delete_nonce = wp_create_nonce( 'nl_delete_campaign' );
 				$actions = [
-					'delete' => sprintf( '<a href="?page=%s&action=%s&id=%s&_wpnonce=%s">' . __('Delete', 'dsz-newsletter') . '</a>', esc_attr( $_REQUEST['page'] ), 'delete', absint( $rec->id ), $delete_nonce )
+					'edit' => sprintf( '<a href="%s">%s</a>', $editlink, __('Edit', 'dsz-newsletter') ),
+					'view' => sprintf( '<a target="_blank" href="%s">%s</a>', $rec->archive_url, __('View', 'dsz-newsletter') ),
+					'delete' => sprintf( '<a href="?page=%s&action=%s&id=%s&_wpnonce=%s">%s</a>', esc_attr( $_REQUEST['page'] ), 'delete', absint( $rec->id ), $delete_nonce, __('Delete', 'dsz-newsletter') ),
 				];
 
 		         //Display the cell
