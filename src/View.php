@@ -68,7 +68,7 @@ class View {
 		$html = '';
 		if (!empty($data)) {
 			foreach ($data as $item) {
-				$html .= sprintf('<li id="items_%d" data-id="%d">%s - %s - %s</li>',
+				$html .= sprintf('<li id="items_%d" data-id="%d">%s - %s - %s <button type="button" class="delete"></button></li>',
 					$item['id'], $item['id'], $item['title'], $item['date'], $item['location']);
 			}
 		}
