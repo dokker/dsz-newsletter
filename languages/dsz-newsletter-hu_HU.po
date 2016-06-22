@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: dsz Newsletter generator\n"
-"POT-Creation-Date: 2016-06-16 09:59+0200\n"
-"PO-Revision-Date: 2016-06-16 10:00+0200\n"
+"POT-Creation-Date: 2016-06-22 10:18+0200\n"
+"PO-Revision-Date: 2016-06-22 10:18+0200\n"
 "Last-Translator: docker <dock3r@gmail.com>\n"
 "Language-Team: colorandcode <denes@colorandcode.hu>\n"
 "Language: hu_HU\n"
@@ -20,52 +20,61 @@ msgstr ""
 msgid "Edit Newsletter"
 msgstr "Hírlevél szerkesztése"
 
-#: src/Admin.php:201
+#: src/Admin.php:205
 msgid "Create Newsletter"
 msgstr "Hírlevél létrehozása"
 
-#: src/Admin.php:529
+#: src/Admin.php:533
 msgid "Error storing campaign details in database."
 msgstr "Hiba a kampány adatainak tárolása során."
 
-#: src/Admin.php:531
+#: src/Admin.php:535
 msgid "MC Campaign creation successful."
 msgstr "MC kampány létrehozása sikeres"
 
-#: src/Admin.php:534
+#: src/Admin.php:538
 msgid "MC Campaign creation failed."
 msgstr "MC kampány létrehozása sikertelen"
 
-#: src/Admin.php:563
+#: src/Admin.php:567
 msgid "Campaign data updated"
 msgstr "A kampány adatai módosultak"
 
-#: src/Admin.php:565
+#: src/Admin.php:569
 msgid "Error updating campaign content"
 msgstr "Hiba a kampány tartalmának módosítása közben"
 
-#: src/Admin.php:568
+#: src/Admin.php:572
 msgid "Error updating campaign data"
 msgstr "Hiba a kampány adatainak módosítása közben"
 
-#: src/Admin.php:588
+#: src/Admin.php:592
 #, php-format
 msgid "<i>%s</i> successfully deleted."
 msgstr "<i>%s</i> sikeresen törölve."
 
-#: src/Admin.php:591
+#: src/Admin.php:595
 msgid "Error deleting Mailchimp campaign"
 msgstr "Hiba a Mailchimp kampány törlésekor"
 
-#: src/Admin.php:594
+#: src/Admin.php:598
 msgid "Error deleting saved newsletter"
 msgstr "Hiba a mentett hírlevél törlésekor"
 
-#: src/Admin.php:606
+#: src/Admin.php:619
+#, php-format
+msgid "<i>%s</i> successfully sent."
+msgstr "<i>%s</i> sikeresen elküldve."
+
+#: src/Admin.php:622
+msgid "Error sending Mailchimp campaign"
+msgstr "Hiba a kampány kiküldése közben"
+
+#: src/Admin.php:634
 msgid "Successful campaign sending"
 msgstr "Sikeres kampány kiküldés"
 
-#: src/Admin.php:609
+#: src/Admin.php:637
 msgid "Failed to send campaign"
 msgstr "Sikertelen kampány kiküldés"
 
@@ -101,17 +110,21 @@ msgstr "Elküldve"
 msgid "Failed"
 msgstr "Sikertelen"
 
-#: src/Table.php:142
+#: src/Table.php:143
 msgid "Edit"
 msgstr "Szerkesztés"
 
-#: src/Table.php:143
+#: src/Table.php:144
 msgid "View"
 msgstr "Megtekintés"
 
-#: src/Table.php:144
+#: src/Table.php:145
 msgid "Delete"
 msgstr "Törlés"
+
+#: src/Table.php:149
+msgid "Send"
+msgstr "Küldés"
 
 #: templates/admin_campaign_list.php:2
 msgid "Newsletter campaigns"

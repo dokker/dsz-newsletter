@@ -41,7 +41,7 @@ class Admin {
 	{
 		$view = new \cncNL\View();
 
-		if (isset($_GET['action']) && $_GET['action'] != 'delete')	{
+		if (isset($_GET['action']) && $_GET['action'] == 'edit' )	{
 			if (!isset($_POST['nl-phase'])) {
 				$phase = 0;
 			} else {
@@ -108,6 +108,10 @@ class Admin {
 			// Init campaign deletion
 			if(isset($_GET['action']) && $_GET['action'] == 'delete') {
 				$this->deleteNewsletter();
+			}
+			// Init campaign send
+			if(isset($_GET['action']) && $_GET['action'] == 'send') {
+				$this->sendNewsletter();
 			}
 
 			//Our class extends the WP_List_Table class, so we need to make sure that it's there
@@ -592,6 +596,30 @@ class Admin {
 			}
 			if (!$db_res) {
 				$this->setMessage(__('Error deleting saved newsletter', 'dsz_newsletter'), 'error');
+			}
+		}
+	}
+
+	/**
+	 * Handle campaign send
+	 */
+	private function sendNewsletter()
+	{
+	    // Verify the nonce.
+		$nonce = esc_attr( $_REQUEST['_wpnonce'] );
+		if ( !wp_verify_nonce( $nonce, 'nl_send_campaign' ) ) {
+			die( 'Go get a life script kiddies' );
+		}
+
+		$stored_id = intval($_GET['id']);
+		$ready_nl = $this->model->getNewsletter($stored_id);
+		$mc_res = $this->newsletter->sendCampaign($ready_nl->campaign_id);
+		if ($mc_res) {
+			$this->model->setNlStatus($ready_nl->campaign_id, '1');
+			$this->setMessage(sprintf(__('<i>%s</i> successfully sent.', 'dsz-newsletter'), $ready_nl->title), 'updated');
+		} else {
+			if (!$mc_res) {
+				$this->setMessage(__('Error sending Mailchimp campaign', 'dsz_newsletter'), 'error');
 			}
 		}
 	}
