@@ -62,7 +62,7 @@ class Admin {
 					$view->assign('campaign_title', $nl_data->title);
 					$view->assign('admin_title', $view->render('admin_title'));
 					// create recommended shows markup
-					$show_list = $this->listifyShowsList($this->getRecommendedShows());
+					$show_list = $this->listifyShowsList($this->getAllShows());
 					
 					$segments = $this->newsletter->getSegments($this->list_id);
 					$segments_list = $this->prepareSegmentsList($segments);
@@ -165,7 +165,7 @@ class Admin {
 				}
 				$view->assign('admin_title', $view->render('admin_title'));
 				// create recommended shows markup
-				$show_list = $this->listifyShowsList($this->getRecommendedShows());
+				$show_list = $this->listifyShowsList($this->getAllShows());
 				
 				$lead_show = $this->getLeadShowDetails($this->getShowById($this->getLeadShow($location)));
 				$view->assign('list_shows_recommended_lead', $view->renderList($show_list, 'sel-lead-recommendations', 'sel-lead-recommendations'));
@@ -173,7 +173,7 @@ class Admin {
 				$view->assign('lead', $view->render('admin_lead'));
 
 				// create featured shows markup
-				$featured_list = $this->listifyShowsList($this->getFeaturedShows($location));
+				$featured_list = $this->listifyShowsList($this->getAllShows());
 				$view->assign('list_shows_featured', $view->renderList($show_list, 'shows-featured', 'sel-featured'));
 				$view->assign('featured', $view->render('admin_featured'));
 
@@ -272,6 +272,9 @@ class Admin {
 	{
 		$DAS = new \DAS();
 		$leadID = $DAS->get_lead_show_id($location);
+		if (!$leadID) {
+			return $this->dsz->getLatestMusorId();
+		}
 		return $leadID;
 	}
 
@@ -325,6 +328,16 @@ class Admin {
 	private function getFeaturedShows($location)
 	{
 		// For testing purposes only. Will be changed in the future.
+		$shows = $this->dsz->getMusorLista();
+		return $shows;
+	}
+
+	/**
+	 * Get shows for lists
+	 * @return array Array of shows objects
+	 */
+	private function getAllShows()
+	{
 		$shows = $this->dsz->getMusorLista();
 		return $shows;
 	}
