@@ -666,11 +666,15 @@ class Admin {
 			$featured_shows = $this->model->prepareShowsList($data['featured']['items']);
 			$view->assign('featured_shows', $featured_shows);
 			$featured_html = $view->render('nl-featured-list');
+		} else {
+			$featured_html = '';
 		}
 		if (!empty($data['recommendations'])) {
 			$recommended_shows = $this->model->prepareShowsList($data['recommendations']['items']);
 			$view->assign('recommended_shows', $recommended_shows);
 			$recommended_html = $view->render('nl-recommended-list');
+		} else {
+			$recommended_html = '';
 		}
 
 		if(!empty($data['yt-url'])) {
@@ -699,17 +703,21 @@ class Admin {
 	private function listifySelectedList($data)
 	{
 		$data = unserialize($data);
-		$list = [];
-		foreach ($data['items'] as $show_id) {
-			$show = $this->dsz->getMusorById($show_id);
+		if (!empty($data)) {
+			$list = [];
+			foreach ($data['items'] as $show_id) {
+				$show = $this->dsz->getMusorById($show_id);
 
-			$date = $this->datetimeToShort($show->ido);
-			$list[] = [
-				'id' => $show->id,
-				'title' => $show->cim,
-				'date' => $date,
-				'location' => $show->helyszin_nev,
-			];
+				$date = $this->datetimeToShort($show->ido);
+				$list[] = [
+					'id' => $show->id,
+					'title' => $show->cim,
+					'date' => $date,
+					'location' => $show->helyszin_nev,
+				];
+			}
+		} else {
+			$list = '';
 		}
 		return $list;
 	}
