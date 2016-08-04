@@ -24,8 +24,9 @@ class Newsletter
 	public function getSegments($list_id)
 	{
 		// check stored results
+		$data = ['count' => 500];
 		if (false === ($stored = get_transient('cnc_mc_segments'))) {
-			$result = $this->MC->get("lists/$list_id/segments");
+			$result = $this->MC->get("lists/$list_id/segments", $data);
 			if ($result !== false) {
 				set_transient('cnc_mc_segments', $result, 3 * HOUR_IN_SECONDS);
 			}
