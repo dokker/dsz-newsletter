@@ -75,6 +75,10 @@ class Admin {
 					$view->assign('lead_show', $lead_show);
 					$view->assign('lead', $view->render('admin_lead'));
 
+					// prepare nnews select markup
+					$nnews_list = $this->listifyNnewsQuery($this->model->getNnews());
+					$view->assign('list_nnews', $view->renderList($nnews_list, 'nnews', 'sel-nnews'));
+
 					// create featured shows markup
 					$selected_featured_list = $this->listifySelectedList($nl_data->featured);
 					$view->assign('list_selected_featured', $view->renderSelectedList($selected_featured_list));
@@ -171,6 +175,10 @@ class Admin {
 				$view->assign('list_shows_recommended_lead', $view->renderList($show_list, 'sel-lead-recommendations', 'sel-lead-recommendations'));
 				$view->assign('lead_show', $lead_show);
 				$view->assign('lead', $view->render('admin_lead'));
+
+				// prepare nnews select markup
+				$nnews_list = $this->listifyNnewsQuery($this->model->getNnews());
+				$view->assign('list_nnews', $view->renderList($nnews_list, 'nnews', 'sel-nnews'));
 
 				// create featured shows markup
 				$featured_list = $this->listifyShowsList($this->getAllShows());
@@ -366,6 +374,23 @@ class Admin {
 				$date = $this->datetimeToShort($show->ido);
 				$label = $show->cim . ' - ' . $date . ' - ' . $show->varos;
 				$list[] = ['label' => $label, 'id' => $show->id];
+			}
+		}
+		return $list;
+	}
+
+	/**
+	 * Create a list from given nnews query
+	 * @param  object $nnews Newsletter news list
+	 * @return array        List of items
+	 */
+	private function listifyNnewsQuery($nnews)
+	{
+		$list = array();
+		if ($nnews->have_posts()) {
+			foreach ($nnews->posts as $item) {
+				$label = $item->post_title;
+				$list[] = ['label' => $label, 'id' => $item->ID];
 			}
 		}
 		return $list;

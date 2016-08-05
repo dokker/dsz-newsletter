@@ -214,4 +214,18 @@ class Model {
 		$query = "SELECT campaign_id FROM {$this->db_table} WHERE id={$id}";
 		return $this->db->get_var($query);
 	}
+
+	/**
+	 * Get all nnews type posts
+	 * @return object Query result
+	 */
+	public function getNnews()
+	{
+		$args = [
+			'posts_per_page' => -1,
+			'post_type' => 'nnews',
+		];
+		$query = new \WP_Query($args);
+		return $query;
+	}
 }
