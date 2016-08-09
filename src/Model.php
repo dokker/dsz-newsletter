@@ -22,6 +22,7 @@ class Model {
 				`campaign_id` CHAR(15),
 				`lead_id` INT(10),
 				`lead_image` VARCHAR(512),
+				`nnews` LONGTEXT,
 				`featured` LONGTEXT,
 				`recommendations` LONGTEXT,
 				`yt_url` VARCHAR(512),
@@ -40,6 +41,7 @@ class Model {
 
 	public function filterNlData($raw)
 	{
+		parse_str($raw['nnews'], $nnews);
 		parse_str($raw['featured'], $featured);
 		parse_str($raw['recommendations'], $recommendations);
 		$data = [
@@ -47,6 +49,7 @@ class Model {
 			'segment' => intval($raw['segment']),
 			'lead-id' => intval($raw['lead-id']),
 			'lead-image' => esc_url($raw['lead-image']),
+			'nnews' => $nnews,
 			'featured' => $featured,
 			'recommendations' => $recommendations,
 			'yt-url' => esc_url($raw['yt-url']),
@@ -99,6 +102,24 @@ class Model {
 	}
 
 	/**
+	 * Create normalized detailed array of selected nnews
+	 * @param  array $nnews_arr Selected nnews ids
+	 * @return array            Detailed nnews list
+	 */
+	public function prepareNnewsList($nnews_arr)
+	{
+		$nnews = [];
+		foreach ($nnews as $id) {
+			$item = new stdClass();
+			$item->title = get_the_title($id);
+			$item->excerpt = get_the_excerpt($id);
+			$item->permalink = get_permalink($id);
+			$nnews[] = $item;
+		}
+		return $nnews;
+	}	
+
+	/**
 	 * Create names string from given performers
 	 * @param  array $performers Performers
 	 * @return string             Performer names list
@@ -121,9 +142,9 @@ class Model {
 	{
 		$result = $this->db->query($this->db->prepare(
 			"INSERT INTO {$this->db_table}
-			(id, title, segment_id, campaign_id, lead_id, lead_image, featured, recommendations, yt_url, yt_title, archive_url, creation, template_id, status)
+			(id, title, segment_id, campaign_id, lead_id, lead_image, nnews, featured, recommendations, yt_url, yt_title, archive_url, creation, template_id, status)
 			VALUES
-			(%s, %s, %d, %s, %d, %s, %s, %s, %s, %s, %s, %s, %d, %d)",
+			(%s, %s, %d, %s, %d, %s, %s, %s, %s, %s, %s, %s, %s, %d, %d)",
 			[
 				"null",
 				$data['title'],
@@ -131,6 +152,7 @@ class Model {
 				$data['campaign_id'],
 				$data['lead-id'],
 				$data['lead-image'],
+				serialize($data['nnews']),
 				serialize($data['featured']),
 				serialize($data['recommendations']),
 				$data['yt-url'],

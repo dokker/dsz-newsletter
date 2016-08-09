@@ -542,6 +542,7 @@ class Admin {
 			'segment' => $_POST['input-segment'],
 			'lead-id' => $_POST['lead-id'],
 			'lead-image' => $image_url,
+			'nnews' => $_POST['input-nnews'],
 			'featured' => $_POST['input-featured'],
 			'recommendations' => $_POST['input-recommendations'],
 			'yt-url' => $_POST['youtube-url'],
@@ -567,6 +568,7 @@ class Admin {
 
 			// Add content data to campaign
 			$this->preview = $this->newsletter->updateCampaignContent($campaign_id, $data['mc_template'], $sections);
+			// Store newsletter data
 			if(!$this->model->insertNewsletter($data)) {
 				$this->setMessage(__('Error storing campaign details in database.', 'dsz-newsletter'), 'error');
 			} else {
