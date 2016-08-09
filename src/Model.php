@@ -111,10 +111,9 @@ class Model {
 	public function prepareNnewsList($nnews_arr)
 	{
 		$nnews = [];
-		foreach ($nnews as $id) {
-			$item = new stdClass();
+		foreach ($nnews_arr as $id) {
+			$item = new \stdClass();
 			$item->title = get_the_title($id);
-			$item->excerpt = get_the_excerpt($id);
 			$item->permalink = get_permalink($id);
 			$nnews[] = $item;
 		}

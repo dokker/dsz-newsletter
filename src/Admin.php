@@ -694,6 +694,13 @@ class Admin {
 		$lead = $this->dsz->getMusorById($data['lead-id']);
 
 		$view = new \cncNL\View();
+		if (!empty($data['nnews'])) {
+			$nnews = $this->model->prepareNnewsList($data['nnews']['items']);
+			$view->assign('nnews', $nnews);
+			$nnews_html = $view->render('nl-nnews-list');
+		} else {
+			$nnews_html = '';
+		}
 		if (!empty($data['featured'])) {
 			$featured_shows = $this->model->prepareShowsList($data['featured']['items']);
 			$view->assign('featured_shows', $featured_shows);
@@ -719,6 +726,7 @@ class Admin {
 			'lead_image' => '<img class="head-lead-image" src="' . $data['lead-image'] . '" />',
 			'lead_excerpt' => $this->dsz->getMusorExcerpt($data['lead-id']),
 			'lead_button' => '<a href="' . $lead->seo . '">TOVÁBB >></a>',
+			'nnews_list' => $nnews_html,
 			'featured_list' => $featured_html,
 			'recommended_list' => $recommended_html,
 			'youtube_image' => $yt_image,
