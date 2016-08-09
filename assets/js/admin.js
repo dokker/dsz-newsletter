@@ -37,6 +37,8 @@ jQuery(document).ready(function($) {
 
   // handle submit
   $('.nl-form').submit(function() {
+    var ndata = $('.nl-sortable.nnews').sortable('serialize');
+    $('.input-nnews').val(ndata);
     var fdata = $('.nl-sortable.featured').sortable('serialize');
     $('.input-featured').val(fdata);
     var rdata = $('.nl-sortable.recommendations').sortable('serialize');

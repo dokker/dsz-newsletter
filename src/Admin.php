@@ -748,6 +748,28 @@ class Admin {
 	}
 
 	/**
+	 * Create a list from given serialized nnews data
+	 * @param  string $data Serialized data
+	 * @return array       Structured data
+	 */
+	private function listifySelectedNnewsList($data)
+	{
+		$data = unserialize($data);
+		if (!empty($data)) {
+			$list = [];
+			foreach ($data['items'] as $nnews_id) {
+				$list[] = [
+					'id' => $nnews_id,
+					'title' => get_the_title($nnews_id),
+				];
+			}
+		} else {
+			$list = '';
+		}
+		return $list;
+	}
+
+	/**
 	 * Convert db datetime to shorter format
 	 * @param  string $datetime Datetime format
 	 * @return string           Shorter date format

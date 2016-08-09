@@ -76,6 +76,23 @@ class View {
 	}
 
 	/**
+	 * Get selected nnews markup
+	 * @param  array $data Shows data
+	 * @return string       HTML markup
+	 */
+	public function renderSelectedNnewsList($data)
+	{
+		$html = '';
+		if (!empty($data)) {
+			foreach ($data as $item) {
+				$html .= sprintf('<li id="items_%d" data-id="%d">%s <button type="button" class="delete"></button></li>',
+					$item['id'], $item['id'], $item['title']);
+			}
+		}
+		return $html;
+	}
+
+	/**
 	 * Generate Youtube embed code by video id
 	 * @param  int $video_url Video ID
 	 * @return string            Generated embed code
