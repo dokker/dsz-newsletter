@@ -79,10 +79,14 @@ class Admin {
 					$nnews_list = $this->listifyNnewsQuery($this->model->getNnews());
 					$view->assign('list_nnews', $view->renderList($nnews_list, 'nnews', 'sel-nnews'));
 
-					// create featured shows markup
+					// selected nnews
+					$selected_nnews_list = $this->listifySelectedNnewsList($nl_data->nnews);
+					$view->assign('list_selected_nnews', $view->renderSelectedNnewsList($selected_nnews_list));
+					// selected featured shows
 					$selected_featured_list = $this->listifySelectedList($nl_data->featured);
 					$view->assign('list_selected_featured', $view->renderSelectedList($selected_featured_list));
 
+					// create featured shows markup
 					$view->assign('list_shows_featured', $view->renderList($show_list, 'shows-featured', 'sel-featured'));
 					$view->assign('featured', $view->render('admin_featured'));
 
@@ -590,6 +594,7 @@ class Admin {
 			'segment' => $_POST['sel-segments'],
 			'lead-id' => $_POST['lead-id'],
 			'lead-image' => $_POST['upload_image'],
+			'nnews' => $_POST['input-nnews'],
 			'featured' => $_POST['input-featured'],
 			'recommendations' => $_POST['input-recommendations'],
 			'yt-url' => $_POST['youtube-url'],

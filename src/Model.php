@@ -66,6 +66,7 @@ class Model {
 	 */
 	public function filterUpdateNlData($raw)
 	{
+		parse_str($raw['nnews'], $nnews);
 		parse_str($raw['featured'], $featured);
 		parse_str($raw['recommendations'], $recommendations);
 		$data = [
@@ -74,6 +75,7 @@ class Model {
 			'segment' => intval($raw['segment']),
 			'lead-id' => intval($raw['lead-id']),
 			'lead-image' => esc_url($raw['lead-image']),
+			'nnews' => $nnews,
 			'featured' => $featured,
 			'recommendations' => $recommendations,
 			'yt-url' => esc_url($raw['yt-url']),
@@ -174,6 +176,7 @@ class Model {
 				'segment_id' => $data['segment'],
 				'lead_id' => $data['lead-id'],
 				'lead_image' => $data['lead-image'],
+				'nnews' => serialize($data['nnews']),
 				'featured' => serialize($data['featured']),
 				'recommendations' => serialize($data['recommendations']),
 				'yt_url' => $data['yt-url'],
@@ -181,7 +184,7 @@ class Model {
 				'template_id' => $data['mc_template'],
 			],
 			['id' => $data['id']], 
-			['%s', '%d', '%d', '%s', '%s', '%s', '%s', '%s', '%d']
+			['%s', '%d', '%d', '%s', '%s', '%s', '%s', '%s', '%s', '%d']
 		);
 	}
 
