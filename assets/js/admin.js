@@ -113,6 +113,12 @@ jQuery(document).ready(function($) {
     });
   }
 
+  function handle_confirm_send () {
+    $('.row-actions .send a, .submit-campaign-send').click(function(e) {
+      return confirm('Biztos, hogy kiküldjük a hírlevelet az összes feliratkozónak?');
+    });
+  }
+
   /**
    * Initialize the newsletter generation form
    */
@@ -122,6 +128,7 @@ jQuery(document).ready(function($) {
     handle_choice($('.add_nnews'), $('.nl-sortable.nnews'));
     handle_lead_creation();
     handle_item_delete();
+    handle_confirm_send();
   }
 
   init_nl_form();
