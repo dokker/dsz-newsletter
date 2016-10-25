@@ -10,7 +10,7 @@
 								<tr>
 									<td>
 										<h3><?php echo $item->title; ?></h3>
-										<table border="0" cellpadding="0" cellspacing="0" class="button button-buy"><tr><td><a href="<?php echo $item->permalink; ?>" target="_blank">Tovább ►</a></td></tr></table>
+										<table border="0" cellpadding="0" cellspacing="0" class="button button-buy"><tr><td><a href="<?php echo $item->permalink; ?>?<?php echo $utm; ?>" target="_blank">Tovább ►</a></td></tr></table>
 									</td>
 								</tr>
 							</table>
