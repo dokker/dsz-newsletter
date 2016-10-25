@@ -557,11 +557,7 @@ class Admin {
 		$data = $this->model->filterNlData($data);
 
 		// Create campaign based on segment data
-		if ($this->getCapitalId() == $data['segment']) {
-			$response = $this->newsletter->createCampaign($this->list_id, $data['title'], $data['segment']);
-		} else {
-			$response = $this->newsletter->createCampaign($this->list_id, $data['title']);
-		}
+		$response = $this->newsletter->createCampaign($this->list_id, $data['title'], $data['segment']);
 
 		if ($response) {
 			$campaign_id = $response->id;
