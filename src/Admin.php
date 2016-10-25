@@ -688,6 +688,7 @@ class Admin {
 	private function getNlSections($data)
 	{
 		$lead = $this->dsz->getMusorById($data['lead-id']);
+		$utm = $this->generateUTM($data);
 
 		$view = new \cncNL\View();
 		if (!empty($data['nnews'])) {
@@ -700,6 +701,7 @@ class Admin {
 		if (!empty($data['featured'])) {
 			$featured_shows = $this->model->prepareShowsList($data['featured']['items']);
 			$view->assign('featured_shows', $featured_shows);
+			$view->assign('utm', $utm);
 			$featured_html = $view->render('nl-featured-list');
 		} else {
 			$featured_html = '';
@@ -707,6 +709,7 @@ class Admin {
 		if (!empty($data['recommendations'])) {
 			$recommended_shows = $this->model->prepareShowsList($data['recommendations']['items']);
 			$view->assign('recommended_shows', $recommended_shows);
+			$view->assign('utm', $utm);
 			$recommended_html = $view->render('nl-recommended-list');
 		} else {
 			$recommended_html = '';
@@ -721,14 +724,31 @@ class Admin {
 			'lead_title' => $lead->cim,
 			'lead_image' => '<img class="head-lead-image" src="' . $data['lead-image'] . '" />',
 			'lead_excerpt' => $this->dsz->getMusorExcerpt($data['lead-id']),
-			'lead_button' => '<a href="' . get_site_url() . '/eloadasok/' . $lead->seo . '">TOVÁBB >></a>',
+			'lead_button' => '<a href="' . get_site_url() . '/eloadasok/' .
+				$lead->seo . '?' . $utm . '">TOVÁBB >></a>',
 			'nnews_list' => $nnews_html,
 			'featured_list' => $featured_html,
 			'recommended_list' => $recommended_html,
 			'youtube_image' => $yt_image,
 			'youtube_title' => $data['yt-title'],
+			'utm' => $utm,
 		];
 		return $sections;
+	}
+
+	/**
+	 * Generate UTM url variables
+	 * @param  array $data  Newsletter data structure
+	 * @return string                Generated variables
+	 */
+	public function generateUTM($data)
+	{
+		$segment_name = $this->getSegmentNameById($data['segment']);
+		$campaign_name = $data['title'];
+		$utm = 'utm_source=Dumaszinhaz-nezoi-lista-' .
+			$segment_name.'&amp;utm_medium=email&amp;utm_campaign=' .
+			sanitize_title($campaign_name);
+		return $utm;
 	}
 
 	/**
