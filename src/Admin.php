@@ -721,7 +721,7 @@ class Admin {
 			'lead_title' => $lead->cim,
 			'lead_image' => '<img class="head-lead-image" src="' . $data['lead-image'] . '" />',
 			'lead_excerpt' => $this->dsz->getMusorExcerpt($data['lead-id']),
-			'lead_button' => '<a href="' . $lead->seo . '">TOVÁBB >></a>',
+			'lead_button' => '<a href="' . get_site_url() . '/eloadasok/' . $lead->seo . '">TOVÁBB >></a>',
 			'nnews_list' => $nnews_html,
 			'featured_list' => $featured_html,
 			'recommended_list' => $recommended_html,
