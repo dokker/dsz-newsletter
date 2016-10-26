@@ -691,6 +691,10 @@ class Admin {
 		$utm = $this->generateUTM($data);
 
 		$view = new \cncNL\View();
+
+		$view->assign('utm', $utm);
+		$menu_html = $view->render('nl-menu');
+
 		if (!empty($data['nnews'])) {
 			$nnews = $this->model->prepareNnewsList($data['nnews']['items']);
 			$view->assign('nnews', $nnews);
@@ -701,7 +705,6 @@ class Admin {
 		if (!empty($data['featured'])) {
 			$featured_shows = $this->model->prepareShowsList($data['featured']['items']);
 			$view->assign('featured_shows', $featured_shows);
-			$view->assign('utm', $utm);
 			$featured_html = $view->render('nl-featured-list');
 		} else {
 			$featured_html = '';
@@ -709,7 +712,6 @@ class Admin {
 		if (!empty($data['recommendations'])) {
 			$recommended_shows = $this->model->prepareShowsList($data['recommendations']['items']);
 			$view->assign('recommended_shows', $recommended_shows);
-			$view->assign('utm', $utm);
 			$recommended_html = $view->render('nl-recommended-list');
 		} else {
 			$recommended_html = '';
@@ -732,6 +734,7 @@ class Admin {
 			'youtube_image' => $yt_image,
 			'youtube_title' => $data['yt-title'],
 			'utm' => $utm,
+			'menu' => $menu_html,
 		];
 		return $sections;
 	}
