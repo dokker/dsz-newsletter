@@ -6,12 +6,14 @@ class Newsletter
 {
 	private $api_key;
 	private $list_id;
+	private $timeout;
 	
 	function __construct()
 	{
 		// Call in config
 		$cac_donation_config = include(CNCNL_PROJECT_PATH . CNCNL_DS . 'config.php');
 		$this->api_key = $cac_donation_config['api_key'];
+		$this->timeout = 100;
 
 		$this->MC = new MailChimp($this->api_key);
 	}
@@ -26,7 +28,7 @@ class Newsletter
 		// check stored results
 		$data = ['count' => 500];
 		if (false === ($stored = get_transient('cnc_mc_segments'))) {
-			$result = $this->MC->get("lists/$list_id/segments", $data);
+			$result = $this->MC->get("lists/$list_id/segments", $data, $this->timeout);
 			if ($result !== false) {
 				set_transient('cnc_mc_segments', $result, 3 * HOUR_IN_SECONDS);
 			}
@@ -46,7 +48,7 @@ class Newsletter
 		if (false === ($stored = get_transient('cnc_mc_templates'))) {
 			// filter user generated templates
 			$data = ['type' => 'user'];
-			$result = $this->MC->get("templates", $data);
+			$result = $this->MC->get("templates", $data, $this->timeout);
 			if ($this->MC->success()) {
 				set_transient('cnc_mc_templates', $result, 6 * HOUR_IN_SECONDS);
 			}
@@ -81,7 +83,7 @@ class Newsletter
 			$data['recipients']->segment_opts = new \stdClass;
 			$data['recipients']->segment_opts->saved_segment_id = $segment_id;
 		}
-		$this->MC->post("campaigns", $data);
+		$this->MC->post("campaigns", $data, $this->timeout);
 		if($this->MC->success()) {
 			$response = $this->MC->getLastResponse();
 			return json_decode($response['body']);
@@ -99,7 +101,7 @@ class Newsletter
 	{
 		// check stored results
 		if (false === ($stored = get_transient('cnc_mc_campaign_defaults'))) {
-			$result = $this->MC->get("lists/$list_id");
+			$result = $this->MC->get("lists/$list_id", array(), $this->timeout);
 			if ($result !== false) {
 				$defaults = $result['campaign_defaults'];
 				set_transient('cnc_mc_campaign_defaults', $defaults, 6 * HOUR_IN_SECONDS);
@@ -147,7 +149,7 @@ class Newsletter
 				'sections' => $sections,
 			],
 		];
-		$response = $this->MC->put("campaigns/$campaign_id/content", $args);
+		$response = $this->MC->put("campaigns/$campaign_id/content", $args, $this->timeout);
 		if ($this->MC->success()) {
 			return $response['html'];
 		} else {
@@ -173,7 +175,7 @@ class Newsletter
 				],
 			],
 		];
-		$this->MC->patch("campaigns/$campaign_id", $args);
+		$this->MC->patch("campaigns/$campaign_id", $args, $this->timeout);
 		if ($this->MC->success()) {
 			return true;
 		} else {
@@ -188,7 +190,7 @@ class Newsletter
 	 */
 	public function sendCampaign($campaign_id)
 	{
-		$result = $this->MC->post("campaigns/$campaign_id/actions/send");
+		$result = $this->MC->post("campaigns/$campaign_id/actions/send", array(), $this->timeout);
 		if(!$this->MC->getLastError()) {
 			return true;
 		} else {
@@ -218,7 +220,7 @@ class Newsletter
 	 */
 	public function deleteCampaign($campaign_id)
 	{
-		$this->MC->delete("campaigns/$campaign_id");
+		$this->MC->delete("campaigns/$campaign_id", array(), $this->timeout);
 		if (!$this->MC->getLastError()) {
 			return true;
 		} else {
