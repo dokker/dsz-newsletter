@@ -557,7 +557,7 @@ class Admin {
 		$data = $this->model->filterNlData($data);
 
 		// Create campaign based on segment data
-		$response = $this->newsletter->createCampaign($this->list_id, $data['title'], $data['segment']);
+		$response = $this->newsletter->createCampaign($this->list_id, $data['title'], $data['segment'], $this->generateGASlug($data['title']));
 
 		if ($response) {
 			$campaign_id = $response->id;
@@ -812,5 +812,18 @@ class Admin {
 	{
 		$full_date = strtotime($datetime);
 		return date('y.m.d', $full_date);
+	}
+
+	/**
+	 * Generate GA slug for MC campaign
+	 * @param  string $title Campaign title
+	 * @return string        Generated slug (max 50 characters long)
+	 */
+	private function generateGASlug($title)
+	{
+		$slug_title = sanitize_title($title);
+		$slug_title = (strlen($slug_title) > 41) ? substr($slug_title,0,41) : $slug_title;
+		$slug = str_replace('-', '_', $slug_title) . '_' . date('Ymd');
+		return $slug;
 	}
 }

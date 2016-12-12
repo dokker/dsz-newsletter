@@ -66,7 +66,7 @@ class Newsletter
 	 * @param  int,boolean $segment_id Segment ID
 	 * @return int,boolean              Campaign id or false
 	 */
-	public function createCampaign($list_id, $name, $segment_id = false)
+	public function createCampaign($list_id, $name, $segment_id = false, $ga_slug = '')
 	{
 		$defaults = $this->getCampaignDefaults($list_id);
 		$data = [
@@ -77,7 +77,10 @@ class Newsletter
 				'from_name' => $defaults['from_name'],
 				'reply_to' => $defaults['from_email'],
 				'inline_css' => true,
-			]
+			],
+			'tracking' => (object)[
+				'google_analytics' => $ga_slug,
+			],
 		];
 		if ($segment_id) {
 			$data['recipients']->segment_opts = new \stdClass;
