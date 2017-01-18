@@ -284,7 +284,7 @@ class Admin {
 	{
 		$DAS = new \DAS();
 		$leadID = $DAS->get_lead_show_id($location);
-		if (!$leadID) {
+		if (!$leadID || empty($leadID)) {
 			return $this->dsz->getLatestMusorId();
 		}
 		return $leadID;
@@ -299,7 +299,11 @@ class Admin {
 	private function getLeadShowDetails($show, $image = null)
 	{
 		if ($image === null) {
-			$image = $this->cropLeadImage($show->eloadas_kepek[0]->original, true);
+			if (!empty($show->eloadas_kepek)) {
+				$image = $this->cropLeadImage($show->eloadas_kepek[0]->original, true);
+			} else {
+				$image = '';
+			}
 		}
 		$details = [
 			'id' => $show->id,
